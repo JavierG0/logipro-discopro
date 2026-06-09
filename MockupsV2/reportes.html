@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - Discopro</title>
+    <link rel="stylesheet" href="app_estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-motorcycle"></i>
+                <h1>Discopro</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                    <li><a href="motoristas.html"><i class="fa-solid fa-users"></i> Motoristas</a></li>
+                    <li class="active"><a href="reportes.html"><i class="fa-solid fa-chart-simple"></i> Reportes</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h2>Generación de Reportes</h2>
+            </header>
+
+            <section class="card">
+                <h3><i class="fa-solid fa-filter"></i> Filtros de Reporte</h3>
+                <form class="form-grid">
+                    <div class="input-group">
+                        <label for="fecha-desde">Fecha Desde</label>
+                        <input type="date" id="fecha-desde">
+                    </div>
+                    <div class="input-group">
+                        <label for="fecha-hasta">Fecha Hasta</label>
+                        <input type="date" id="fecha-hasta">
+                    </div>
+                    <div class="input-group">
+                        <label for="report-motorista">Motorista</label>
+                        <select id="report-motorista">
+                            <option value="">Todos</option>
+                            <option value="1">Juan Pérez</option>
+                            <option value="2">Ana Gómez</option>
+                        </select>
+                    </div>
+                    <div class="full-width text-right">
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-file-arrow-down"></i> Generar Reporte</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card">
+                <h3><i class="fa-solid fa-table-list"></i> Vista Previa del Reporte (01/04 al 02/04)</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Mov.</th>
+                                <th>N° Despacho</th>
+                                <th>Motorista</th>
+                                <th>Sucursal</th>
+                                <th>Estado Final</th>
+                                <th>Fecha</th>
+                                <th>H. Asignación</th>
+                                <th>H. Entrega</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>10546</td>
+                                <td>55667788</td>
+                                <td>Pedro Marín</td>
+                                <td>CV Apoquindo 3400</td>
+                                <td><span class="status status-entregado">Entregado</span></td>
+                                <td>02/04/2024</td>
+                                <td>14:20</td>
+                                <td>14:55</td>
+                            </tr>
+                            <tr>
+                                <td>10545</td>
+                                <td>99887766</td>
+                                <td>Ana Gómez</td>
+                                <td>CV Providencia 1050</td>
+                                <td><span class="status status-fallido">Entrega Fallida</span></td>
+                                <td>02/04/2024</td>
+                                <td>14:15</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Completar Movimiento - Discopro{% endblock %}
+{% block page_title %}Completar Movimiento{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="fa-solid fa-check-circle"></i> Completar Movimiento</h4>
+        </div>
+        <div class="card-body">
+            <p>Movimiento: <strong>{{ movimiento.numero_despacho }}</strong></p>
+            <p>Motorista: <strong>{% if movimiento.motorista %}{{ movimiento.motorista.usuario.user.get_full_name }}{% else %}Sin asignar{% endif %}</strong></p>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Comentarios</label>
+                        <textarea name="comentarios" class="form-control" rows="3" placeholder="Comentarios sobre la entrega..."></textarea>
+                    </div>
+                </div>
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> Completar</button>
+                    <a href="{% url 'movimientos:detalle' movimiento.id %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

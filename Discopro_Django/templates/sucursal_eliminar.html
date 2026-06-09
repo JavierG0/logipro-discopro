@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar Sucursal - Discopro{% endblock %}
+{% block page_title %}Eliminar Sucursal{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-trash"></i> Eliminar Sucursal</h3>
+    </div>
+    
+    <div class="alert alert-warning">
+        <p>¿Está seguro de que desea eliminar la sucursal <strong>{{ sucursal.nombre }}</strong>?</p>
+        <p>Esta acción no se puede deshacer.</p>
+    </div>
+    
+    <form method="POST" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'farmacia:lista' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</section>
+{% endblock %}

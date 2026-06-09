@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Crear Moto - Discopro{% endblock %}
+{% block page_title %}Crear Nueva Moto{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-motorcycle"></i> Agregar Moto</h3>
+    </div>
+    
+    <form method="POST" class="form-container">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.placa.id_for_label }}">{{ form.placa.label }}</label>
+            {{ form.placa }}
+            {% if form.placa.errors %}
+                <div class="alert alert-danger">{{ form.placa.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.marca.id_for_label }}">{{ form.marca.label }}</label>
+            {{ form.marca }}
+            {% if form.marca.errors %}
+                <div class="alert alert-danger">{{ form.marca.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.modelo.id_for_label }}">{{ form.modelo.label }}</label>
+            {{ form.modelo }}
+            {% if form.modelo.errors %}
+                <div class="alert alert-danger">{{ form.modelo.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.año.id_for_label }}">{{ form.año.label }}</label>
+            {{ form.año }}
+            {% if form.año.errors %}
+                <div class="alert alert-danger">{{ form.año.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.color.id_for_label }}">{{ form.color.label }}</label>
+            {{ form.color }}
+            {% if form.color.errors %}
+                <div class="alert alert-danger">{{ form.color.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.sucursal.id_for_label }}">{{ form.sucursal.label }}</label>
+            {{ form.sucursal }}
+            {% if form.sucursal.errors %}
+                <div class="alert alert-danger">{{ form.sucursal.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
+            {{ form.estado }}
+            {% if form.estado.errors %}
+                <div class="alert alert-danger">{{ form.estado.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.activo.id_for_label }}">{{ form.activo.label }}</label>
+            {{ form.activo }}
+            {% if form.activo.errors %}
+                <div class="alert alert-danger">{{ form.activo.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar Moto</button>
+            <a href="{% url 'motoristas:lista_motos' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

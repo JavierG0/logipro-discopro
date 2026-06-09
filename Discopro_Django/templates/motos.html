@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Motos - Discopro{% endblock %}
+{% block page_title %}Gestión de Motos{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-motorcycle"></i> Listado de Motos</h3>
+        <a href="{% url 'motoristas:crear_moto' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Agregar Moto</a>
+    </div>
+    
+    <form method="GET" class="filters">
+        <div class="filter-group">
+            <label>Filtrar por estado:</label>
+            <select name="estado" id="estado-filter" onchange="this.form.submit()">
+                <option value="">Todos</option>
+                <option value="disponible" {% if request.GET.estado == 'disponible' %}selected{% endif %}>Disponible</option>
+                <option value="en_mantenimiento" {% if request.GET.estado == 'en_mantenimiento' %}selected{% endif %}>En Mantenimiento</option>
+                <option value="dañada" {% if request.GET.estado == 'dañada' %}selected{% endif %}>Dañada</option>
+                <option value="retirada" {% if request.GET.estado == 'retirada' %}selected{% endif %}>Retirada</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label>Filtrar por sucursal:</label>
+            <select name="sucursal" id="sucursal-filter" onchange="this.form.submit()">
+                <option value="">Todas</option>
+                {% for s in sucursales %}
+                    <option value="{{ s.id }}" {% if request.GET.sucursal|add:"0" == s.id %}selected{% endif %}>{{ s.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="filter-group" style="display:flex;">
+            <input type="text" name="busqueda" id="busqueda" placeholder="Buscar moto..." value="{{ request.GET.busqueda|default_if_none:'' }}">
+            <button type="submit" class="btn btn-secondary" style="margin-left:10px;">Buscar</button>
+        </div>
+    </form>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Placa</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Año</th>
+                    <th>Color</th>
+                    <th>Sucursal</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in motos %}
+                <tr>
+                    <td>{{ m.id }}</td>
+                    <td><strong>{{ m.placa }}</strong></td>
+                    <td>{{ m.marca }}</td>
+                    <td>{{ m.modelo }}</td>
+                    <td>{{ m.año }}</td>
+                    <td>{{ m.color }}</td>
+                    <td>{{ m.sucursal.nombre }}</td>
+                    <td><span class="badge badge-{{ m.estado }}">{{ m.get_estado_display }}</span></td>
+                    <td>
+                        <a href="{% url 'motoristas:editar_moto' m.id %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'motoristas:eliminar_moto' m.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center">No hay motos registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

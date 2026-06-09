@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motoristas - Discopro</title>
+    <link rel="stylesheet" href="app_estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-motorcycle"></i>
+                <h1>Discopro</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                    <li class="active"><a href="motoristas.html"><i class="fa-solid fa-users"></i> Motoristas</a></li>
+                    <li><a href="reportes.html"><i class="fa-solid fa-chart-simple"></i> Reportes</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header-with-action">
+                <h2>Gestión de Motoristas</h2>
+                <button class="btn btn-secondary"><i class="fa-solid fa-user-plus"></i> Agregar Motorista</button>
+            </header>
+
+            <section class="card">
+                <h3><i class="fa-solid fa-list-ul"></i> Listado de Flota</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Teléfono</th>
+                                <th>Último Movimiento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Juan Pérez</td>
+                                <td><span class="status status-disponible">Disponible</span></td>
+                                <td>+56 9 8765 4321</td>
+                                <td>Hoy 13:50</td>
+                                <td class="actions"><a href="#" title="Editar"><i class="fa-solid fa-pencil"></i></a> <a href="#" title="Eliminar"><i class="fa-solid fa-trash-can"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Ana Gómez</td>
+                                <td><span class="status status-ruta">En Ruta</span></td>
+                                <td>+56 9 1234 5678</td>
+                                <td>Hoy 14:35</td>
+                                <td class="actions"><a href="#" title="Editar"><i class="fa-solid fa-pencil"></i></a> <a href="#" title="Eliminar"><i class="fa-solid fa-trash-can"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

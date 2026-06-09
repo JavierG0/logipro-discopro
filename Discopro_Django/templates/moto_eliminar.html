@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar Moto - Discopro{% endblock %}
+{% block page_title %}Eliminar Moto{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-trash"></i> Eliminar Moto</h3>
+    </div>
+    
+    <div class="alert alert-warning">
+        <p>¿Está seguro de que desea eliminar la moto <strong>{{ moto.placa }} ({{ moto.marca }} {{ moto.modelo }})</strong>?</p>
+        <p>Esta acción no se puede deshacer.</p>
+    </div>
+    
+    <form method="POST" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'motoristas:lista_motos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</section>
+{% endblock %}

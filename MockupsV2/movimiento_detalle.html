@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle Movimiento - Discopro</title>
+    <link rel="stylesheet" href="app_estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-motorcycle"></i>
+                <h1>Discopro</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                    <li><a href="motoristas.html"><i class="fa-solid fa-users"></i> Motoristas</a></li>
+                    <li><a href="reportes.html"><i class="fa-solid fa-chart-simple"></i> Reportes</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header-with-action">
+                <h2>Detalle del Movimiento #10548</h2>
+                <a href="dashboard.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Volver al Dashboard</a>
+            </header>
+
+            <div class="details-grid">
+                <section class="card">
+                    <h3><i class="fa-solid fa-circle-info"></i> Resumen</h3>
+                    <div class="summary-list">
+                        <div><strong>N° Despacho:</strong> 87654321</div>
+                        <div><strong>Motorista:</strong> Ana Gómez</div>
+                        <div><strong>Sucursal:</strong> CV Providencia 1050</div>
+                        <div><strong>Estado Actual:</strong> <span class="status status-ruta">En Ruta</span></div>
+                        <div><strong>Tipo:</strong> Entrega de Producto</div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <h3><i class="fa-solid fa-timeline"></i> Historial de Trazabilidad</h3>
+                    <ul class="timeline">
+                        <li>
+                            <div class="timeline-icon status-ruta"><i class="fa-solid fa-route"></i></div>
+                            <div class="timeline-content">
+                                <strong>En Ruta</strong>
+                                <p>El motorista se dirige al domicilio del paciente.</p>
+                                <span class="time">14:35</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="timeline-icon status-asignado"><i class="fa-solid fa-hand-pointer"></i></div>
+                            <div class="timeline-content">
+                                <strong>Asignado</strong>
+                                <p>Movimiento asignado a Ana Gómez.</p>
+                                <span class="time">14:32</span>
+                            </div>
+                        </li>
+                         <li>
+                            <div class="timeline-icon status-info"><i class="fa-solid fa-plus"></i></div>
+                            <div class="timeline-content">
+                                <strong>Creado</strong>
+                                <p>Movimiento registrado en el sistema por Operador 1.</p>
+                                <span class="time">14:31</span>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="card full-width-grid">
+                    <h3><i class="fa-solid fa-comment-dots"></i> Observaciones</h3>
+                    <div class="observations-box">
+                        <p><strong>Observación Inicial:</strong> Paciente requiere vuelto de $20.000.</p>
+                        <p><strong>Actualización (14:36):</strong> Motorista informa que no encuentra la dirección, se contacta a paciente para confirmar.</p>
+                    </div>
+                </section>
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>

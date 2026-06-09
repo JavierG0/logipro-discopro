@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Discopro</title>
+    <link rel="stylesheet" href="app_estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-motorcycle"></i>
+                <h1>Discopro</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                    <li><a href="motoristas.html"><i class="fa-solid fa-users"></i> Motoristas</a></li>
+                    <li><a href="reportes.html"><i class="fa-solid fa-chart-simple"></i> Reportes</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="login.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h2>Dashboard - Control de Movimientos</h2>
+            </header>
+
+            <section class="card">
+                <h3><i class="fa-solid fa-plus-circle"></i> Registrar Nuevo Movimiento</h3>
+                <form class="form-grid">
+                    <div class="input-group">
+                        <label for="despacho">N° Despacho / Receta</label>
+                        <input type="text" id="despacho" placeholder="Ej: 12345678">
+                    </div>
+                    <div class="input-group">
+                        <label for="motorista">Asignar a Motorista</label>
+                        <select id="motorista">
+                            <option value="">Seleccionar...</option>
+                            <option value="1">Juan Pérez (Disponible)</option>
+                            <option value="2">Ana Gómez (En ruta)</option>
+                            <option value="3">Carlos Soto (Disponible)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="sucursal">Sucursal Cruz Verde</label>
+                        <select id="sucursal">
+                            <option value="">Seleccionar...</option>
+                            <option value="1">CV Ahumada 235</option>
+                            <option value="2">CV Providencia 1050</option>
+                            <option value="3">CV Apoquindo 3400</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="tipo">Tipo de Movimiento</label>
+                        <select id="tipo">
+                            <option value="entrega">Entrega de Producto</option>
+                            <option value="retiro">Retiro de Receta</option>
+                        </select>
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="obs">Observaciones</label>
+                        <textarea id="obs" rows="2" placeholder="Ej: Paciente requiere vuelto..."></textarea>
+                    </div>
+                    <div class="full-width text-right">
+                        <button type="submit" class="btn btn-primary">Registrar Movimiento</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card">
+                <div class="card-header-action">
+                    <h3><i class="fa-solid fa-clock"></i> Movimientos Activos</h3>
+                    <button class="btn btn-secondary"><i class="fa-solid fa-upload"></i> Carga Masiva</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>N° Despacho</th>
+                                <th>Motorista</th>
+                                <th>Sucursal</th>
+                                <th>Estado</th>
+                                <th>Hora Asignación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>10548</td>
+                                <td>87654321</td>
+                                <td>Ana Gómez</td>
+                                <td>CV Providencia 1050</td>
+                                <td><span class="status status-ruta">En Ruta</span></td>
+                                <td>14:35</td>
+                                <td class="actions"><a href="movimiento_detalle.html" title="Ver Detalles"><i class="fa-solid fa-eye"></i></a> <a href="#" title="Finalizar"><i class="fa-solid fa-check-circle"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td>10547</td>
+                                <td>11223344</td>
+                                <td>Juan Pérez</td>
+                                <td>CV Ahumada 235</td>
+                                <td><span class="status status-asignado">Asignado</span></td>
+                                <td>14:32</td>
+                                <td class="actions"><a href="movimiento_detalle.html" title="Ver Detalles"><i class="fa-solid fa-eye"></i></a> <a href="#" title="Finalizar"><i class="fa-solid fa-check-circle"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td>10546</td>
+                                <td>55667788</td>
+                                <td>Pedro Marín</td>
+                                <td>CV Apoquindo 3400</td>
+                                <td><span class="status status-entregado">Entregado</span></td>
+                                <td>14:20</td>
+                                <td class="actions"><a href="movimiento_detalle.html" title="Ver Detalles"><i class="fa-solid fa-eye"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td>10545</td>
+                                <td>99887766</td>
+                                <td>Ana Gómez</td>
+                                <td>CV Providencia 1050</td>
+                                <td><span class="status status-fallido">Entrega Fallida</span></td>
+                                <td>14:15</td>
+                                <td class="actions"><a href="movimiento_detalle.html" title="Ver Detalles"><i class="fa-solid fa-eye"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

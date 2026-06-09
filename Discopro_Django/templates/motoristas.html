@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Motoristas - Discopro{% endblock %}
+{% block page_title %}Gestión de Motoristas{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-list-ul"></i> Listado de Flota</h3>
+        <a href="{% url 'motoristas:crear' %}" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Agregar Motorista</a>
+    </div>
+    
+    <form method="GET" class="filters">
+        <div class="filter-group">
+            <label>Filtrar por estado:</label>
+            <select name="estado" id="estado-filter" onchange="this.form.submit()">
+                <option value="">Todos</option>
+                <option value="disponible" {% if request.GET.estado == 'disponible' %}selected{% endif %}>Disponible</option>
+                <option value="en_ruta" {% if request.GET.estado == 'en_ruta' %}selected{% endif %}>En Ruta</option>
+                <option value="inactivo" {% if request.GET.estado == 'inactivo' %}selected{% endif %}>Inactivo</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label>Filtrar por sucursal:</label>
+            <select name="sucursal" id="sucursal-filter" onchange="this.form.submit()">
+                <option value="">Todas</option>
+                {% for s in sucursales %}
+                    <option value="{{ s.id }}" {% if request.GET.sucursal|add:"0" == s.id %}selected{% endif %}>{{ s.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="filter-group" style="display:flex;">
+            <input type="text" name="busqueda" id="busqueda" placeholder="Buscar motorista..." value="{{ request.GET.busqueda|default_if_none:'' }}">
+            <button type="submit" class="btn btn-secondary" style="margin-left:10px;">Buscar</button>
+        </div>
+    </form>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Licencia</th>
+                    <th>Moto</th>
+                    <th>Sucursal</th>
+                    <th>Estado</th>
+                    <th>Movimientos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="motoristas-body">
+                {% for m in motoristas %}
+                <tr>
+                    <td>{{ m.id }}</td>
+                    <td><strong>{{ m.usuario.user.first_name }} {{ m.usuario.user.last_name }}</strong></td>
+                    <td>{{ m.licencia }}</td>
+                    <td>{{ m.moto.placa|default:"No asignada" }}</td>
+                    <td>{{ m.sucursal.nombre|default:"No asignada" }}</td>
+                    <td><span class="badge badge-{{ m.estado }}">{{ m.get_estado_display }}</span></td>
+                    <td>{{ m.movimientos_completados }}</td>
+                    <td>
+                        <a href="{% url 'motoristas:detalle' m.id %}" class="btn btn-sm btn-info">Ver</a>
+                        <a href="{% url 'motoristas:editar' m.id %}" class="btn btn-sm btn-warning">Editar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No hay motoristas registrados o que coincidan con la búsqueda.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

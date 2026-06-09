@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Farmacias - Discopro{% endblock %}
+{% block page_title %}Gestión de Farmacias{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-store"></i> Listado de Farmacias</h3>
+        <a href="{% url 'farmacia:crear' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Agregar Farmacia</a>
+    </div>
+    
+    <form method="GET" class="filters">
+        <div class="filter-group" style="display:flex;">
+            <input type="text" name="busqueda" id="busqueda" placeholder="Buscar farmacia..." value="{{ request.GET.busqueda|default_if_none:'' }}">
+            <button type="submit" class="btn btn-secondary" style="margin-left:10px;">Buscar</button>
+        </div>
+    </form>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Ciudad</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Encargado</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in sucursales %}
+                <tr>
+                    <td>{{ s.id }}</td>
+                    <td><strong>{{ s.nombre }}</strong></td>
+                    <td>{{ s.ciudad }}</td>
+                    <td>{{ s.direccion }}</td>
+                    <td>{{ s.telefono }}</td>
+                    <td>{{ s.encargado.user.get_full_name|default:"No asignado" }}</td>
+                    <td>
+                        {% if s.activo %}
+                            <span class="badge badge-success">Activo</span>
+                        {% else %}
+                            <span class="badge badge-danger">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'farmacia:editar' s.id %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'farmacia:eliminar' s.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No hay sucursales registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

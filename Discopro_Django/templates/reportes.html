@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block title %}Reportes - Discopro{% endblock %}
+{% block page_title %}Generación de Reportes{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h3><i class="fa-solid fa-filter"></i> Filtros de Reporte</h3>
+    <form class="form-grid" id="reporte-form" onsubmit="generarReporte(event)">
+        {% csrf_token %}
+        <div class="input-group">
+            <label for="tipo-reporte">Tipo de Reporte</label>
+            <select id="tipo-reporte" name="tipo" required>
+                <option value="">Seleccionar tipo...</option>
+                <option value="movimientos">Reporte de Movimientos</option>
+                <option value="motoristas">Reporte de Motoristas</option>
+                <option value="ingresos">Reporte de Ingresos</option>
+                <option value="desempenio">Reporte de Desempeño</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="fecha-desde">Fecha Desde</label>
+            <input type="date" id="fecha-desde" name="fecha_inicio" required>
+        </div>
+        <div class="input-group">
+            <label for="fecha-hasta">Fecha Hasta</label>
+            <input type="date" id="fecha-hasta" name="fecha_fin" required>
+        </div>
+        <div class="input-group">
+            <label for="motorista-filter">Motorista (opcional)</label>
+            <select id="motorista-filter" name="motorista">
+                <option value="">Todos</option>
+            </select>
+        </div>
+        <div class="full-width text-right">
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-cogs"></i> Generar Reporte</button>
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3><i class="fa-solid fa-file-lines"></i> Reportes Generados</h3>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Período</th>
+                    <th>Generado por</th>
+                    <th>Fecha Creación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="reportes-body">
+                <!-- Será rellenado con JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarReportes();
+        cargarMotoristas();
+    });
+
+    function cargarReportes() {
+        fetch('/api/reportes/')
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.getElementById('reportes-body');
+                tbody.innerHTML = '';
+                data.results.forEach(r => {
+                    const fecha_inicio = new Date(r.fecha_inicio).toLocaleDateString();
+                    const fecha_fin = new Date(r.fecha_fin).toLocaleDateString();
+                    const fecha_creacion = new Date(r.creado_en).toLocaleDateString();
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${r.titulo}</strong></td>
+                            <td>${r.tipo}</td>
+                            <td>${fecha_inicio} - ${fecha_fin}</td>
+                            <td>Sistema</td>
+                            <td>${fecha_creacion}</td>
+                            <td>
+                                <a href="/reportes/${r.id}/" class="btn btn-sm btn-info">Ver</a>
+                                <a href="/reportes/${r.id}/descargar/" class="btn btn-sm btn-success">Descargar</a>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+    }
+
+    function cargarMotoristas() {
+        fetch('/api/motoristas/')
+            .then(r => r.json())
+            .then(data => {
+                const select = document.getElementById('motorista-filter');
+                data.results.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m.id;
+                    option.textContent = m.usuario.user.first_name;
+                    select.appendChild(option);
+                });
+            });
+    }
+
+    function generarReporte(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(document.getElementById('reporte-form'));
+        
+        fetch('/reportes/generar/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(r => r.text())
+        .then(html => {
+            console.log('Reporte generado');
+            cargarReportes();
+        });
+    }
+</script>
+{% endblock %}

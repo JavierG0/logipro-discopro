@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Movimiento - Discopro{% endblock %}
+{% block page_title %}Crear Nuevo Movimiento{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fa-solid fa-box-open"></i> Crear Movimiento</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Número de Despacho / Receta</label>
+                        <input type="text" name="numero_despacho" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Producto / Receta</label>
+                        <input type="text" name="descripcion" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Motorista</label>
+                        <select name="motorista" class="form-select">
+                            <option value="">Sin asignar</option>
+                            {% for m in motoristas %}
+                                <option value="{{ m.id }}">{{ m.usuario.user.get_full_name }}{% if m.moto %} - {{ m.moto.placa }}{% endif %}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Sucursal</label>
+                        <select name="sucursal" class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            {% for s in sucursales %}
+                                <option value="{{ s.id }}">{{ s.nombre }} - {{ s.ciudad }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Tipo de Movimiento</label>
+                        <select name="tipo_movimiento" class="form-select" required>
+                            <option value="entrega">Entrega de Producto</option>
+                            <option value="retiro">Retiro de Receta</option>
+                            <option value="reemplazo">Reemplazo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Fecha Programada</label>
+                        <input type="datetime-local" name="fecha_programada" class="form-control" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Observaciones</label>
+                        <textarea name="observaciones" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-save"></i> Guardar Movimiento</button>
+                    <a href="{% url 'home' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

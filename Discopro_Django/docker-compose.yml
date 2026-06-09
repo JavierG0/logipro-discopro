@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # Servicio de base de datos MariaDB
+  mariadb:
+    image: mariadb:latest
+    container_name: discopro_mariadb
+    environment:
+      MYSQL_DATABASE: discopro_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: discopro
+      MYSQL_PASSWORD: discopro123
+      TZ: 'America/Bogota'
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+    networks:
+      - discopro_network
+
+  # Servicio de aplicación Django
+  django:
+    build: .
+    container_name: discopro_django
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn --config gunicorn_config.py discopro.wsgi:application"
+    environment:
+      DEBUG: "False"
+      SECRET_KEY: "django-insecure-your-secret-key-change-in-production"
+      DB_ENGINE: django.db.backends.mysql
+      DB_NAME: discopro_db
+      DB_USER: discopro
+      DB_PASSWORD: discopro123
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      ALLOWED_HOSTS: "localhost,127.0.0.1,discopro.local"
+      TZ: 'America/Bogota'
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - discopro_network
+
+  # Servicio de Nginx (reverse proxy)
+  nginx:
+    image: nginx:latest
+    container_name: discopro_nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/discopro.conf
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - ./logs:/var/log/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - django
+    networks:
+      - discopro_network
+
+volumes:
+  mariadb_data:
+  static_volume:
+  media_volume:
+
+networks:
+  discopro_network:
+    driver: bridge

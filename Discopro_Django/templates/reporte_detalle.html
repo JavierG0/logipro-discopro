@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalle de Reporte - Discopro{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>{{ reporte.titulo }}</h2>
+            <p class="text-muted mb-0">
+                Tipo: <span class="badge bg-secondary">{{ reporte.get_tipo_display }}</span> | 
+                Generado el {{ reporte.creado_en|date:"d/m/Y H:i" }} por {{ reporte.usuario_creador.user.get_full_name }}
+            </p>
+        </div>
+        <div>
+            {% if reporte.archivo %}
+                <a href="{% url 'reportes:descargar' reporte.id %}" class="btn btn-success">
+                    <i class="fas fa-download"></i> Descargar
+                </a>
+            {% else %}
+                <button class="btn btn-outline-secondary" disabled>Sin archivo adjunto</button>
+            {% endif %}
+            <a href="{% url 'reportes:lista' %}" class="btn btn-outline-primary ms-2">Volver al listado</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Detalles Principales -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Información del Reporte</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Periodo:</dt>
+                        <dd class="col-sm-7">
+                            {% if reporte.fecha_inicio and reporte.fecha_fin %}
+                                {{ reporte.fecha_inicio|date:"d/m/Y" }} al {{ reporte.fecha_fin|date:"d/m/Y" }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-5 mt-2">Descripción:</dt>
+                        <dd class="col-sm-7 mt-2">{{ reporte.descripcion|default:"Sin descripción" }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos Resumidos JSON -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Resumen de Datos</h5>
+                </div>
+                <div class="card-body">
+                    {% if reporte.datos_json %}
+                        <div class="row text-center">
+                            {% for key, value in reporte.datos_json.items %}
+                                {% if value|length < 50 %}
+                                    <div class="col-sm-4 mb-3">
+                                        <div class="p-3 border rounded bg-light">
+                                            <h6 class="text-muted text-uppercase small">{{ key|title }}</h6>
+                                            <h4 class="mb-0">{{ value }}</h4>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <hr>
+                        <h6>Datos Brutos:</h6>
+                        <pre class="bg-light p-3 rounded" style="max-height: 250px; overflow-y: auto;"><code>{{ reporte.datos_json|pprint }}</code></pre>
+                    {% else %}
+                        <p class="text-muted text-center py-4">No hay datos estructurados disponibles para este reporte.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

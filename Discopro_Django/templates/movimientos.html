@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Movimientos - Discopro{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Listado de Movimientos</h2>
+        <a href="{% url 'movimientos:crear' %}" class="btn btn-primary">Nuevo Movimiento</a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Buscar</label>
+                    <input type="text" name="busqueda" class="form-control" placeholder="Despacho, Motorista..." value="{{ request.GET.busqueda }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Estado</label>
+                    <select name="estado" class="form-select">
+                        <option value="">Todos</option>
+                        {% for valor, texto in estados %}
+                        <option value="{{ valor }}" {% if request.GET.estado == valor %}selected{% endif %}>{{ texto }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tipo</label>
+                    <select name="tipo" class="form-select">
+                        <option value="">Todos</option>
+                        {% for valor, texto in tipos %}
+                        <option value="{{ valor }}" {% if request.GET.tipo == valor %}selected{% endif %}>{{ texto }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-outline-primary w-100">Filtrar</button>
+                    <a href="{% url 'movimientos:lista' %}" class="btn btn-outline-secondary w-100 ms-2">Limpiar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Despacho</th>
+                            <th>Motorista</th>
+                            <th>Sucursal</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in movimientos %}
+                        <tr>
+                            <td><strong>{{ m.numero_despacho }}</strong></td>
+                            <td>{% if m.motorista %}{{ m.motorista.usuario.user.first_name }} {{ m.motorista.usuario.user.last_name }}{% else %}Sin asignar{% endif %}</td>
+                            <td>{{ m.sucursal.nombre }}</td>
+                            <td>{{ m.get_tipo_movimiento_display }}</td>
+                            <td>
+                                <span class="badge bg-{% if m.estado == 'completado' %}success{% elif m.estado == 'en_transito' %}primary{% elif m.estado == 'cancelado' %}danger{% else %}warning text-dark{% endif %}">
+                                    {{ m.get_estado_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'movimientos:detalle' m.id %}" class="btn btn-sm btn-info">Ver</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">No se encontraron movimientos.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

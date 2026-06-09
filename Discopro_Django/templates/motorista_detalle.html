@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle Motorista - Discopro{% endblock %}
+{% block page_title %}Detalle de Motorista{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-user"></i> {{ motorista.usuario.user.get_full_name }}</h3>
+        <div>
+            <a href="{% url 'motoristas:editar' motorista.id %}" class="btn btn-warning">Editar</a>
+            <a href="{% url 'motoristas:lista' %}" class="btn btn-secondary">Volver</a>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div>
+            <h4>Información Personal</h4>
+            <dl>
+                <dt>Usuario:</dt>
+                <dd>{{ motorista.usuario.user.username }}</dd>
+                <dt>RUT:</dt>
+                <dd>{{ motorista.usuario.rut }}</dd>
+                <dt>Teléfono:</dt>
+                <dd>{{ motorista.usuario.telefono|default:'No especificado' }}</dd>
+                <dt>Estado:</dt>
+                <dd>{{ motorista.get_estado_display }}</dd>
+            </dl>
+        </div>
+
+        <div>
+            <h4>Información de Licencia y Asignación</h4>
+            <dl>
+                <dt>Licencia:</dt>
+                <dd>{{ motorista.licencia }}</dd>
+                <dt>Tipo de licencia:</dt>
+                <dd>{{ motorista.tipo_licencia }}</dd>
+                <dt>Vigencia de licencia:</dt>
+                <dd>{{ motorista.vigencia_licencia|date:"d/m/Y" }}</dd>
+                <dt>Sucursal asignada:</dt>
+                <dd>{{ motorista.sucursal.nombre|default:'No asignada' }}</dd>
+                <dt>Moto asignada:</dt>
+                <dd>
+                    {% if motorista.moto %}
+                        {{ motorista.moto.placa }} - {{ motorista.moto.marca }} {{ motorista.moto.modelo }} ({{ motorista.moto.año }})
+                    {% else %}
+                        No asignada
+                    {% endif %}
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div>
+            <h4>Movimientos</h4>
+            <dl>
+                <dt>Movimientos completados:</dt>
+                <dd>{{ motorista.movimientos_completados }}</dd>
+                <dt>Ubicación actual:</dt>
+                <dd>{{ motorista.ubicacion_actual|default:'No disponible' }}</dd>
+            </dl>
+        </div>
+
+        <div>
+            <h4>Registro</h4>
+            <dl>
+                <dt>Creado en:</dt>
+                <dd>{{ motorista.creado_en|date:"d/m/Y H:i" }}</dd>
+                <dt>Última actualización:</dt>
+                <dd>{{ motorista.actualizado_en|date:"d/m/Y H:i" }}</dd>
+            </dl>
+        </div>
+    </div>
+</section>
+{% endblock %}
