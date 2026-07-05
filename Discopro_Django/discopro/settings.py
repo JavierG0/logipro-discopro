@@ -78,7 +78,7 @@ DATABASES = {
         'COLLATION': 'utf8mb4_unicode_ci',
         'OPTIONS': {
             'ssl': {
-                'ca': True  # Esto le dice a PyMySQL que use SSL para la conexión remota segura de TiDB
+                'ssl_mode': 'REQUIRED'  # Forzar el uso de TLS sin buscar un archivo 'ca' físico
             }
         }
     }
