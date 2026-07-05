@@ -76,6 +76,11 @@ DATABASES = {
         'PORT': config('DB_PORT', default='3306'),
         'CHARSET': 'utf8mb4',
         'COLLATION': 'utf8mb4_unicode_ci',
+        'OPTIONS': {
+            'ssl': {
+                'ca': True  # Esto le dice a PyMySQL que use SSL para la conexión remota segura de TiDB
+            }
+        }
     }
 }
 
