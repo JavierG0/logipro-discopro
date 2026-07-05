@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Portal Motorista{% endblock %}
+{% block page_title %}Portal del Motorista{% endblock %}
+
+{% block content %}
+{% if primer_pendiente %}
+<div class="action-banner">
+    <p><i class="fa-solid fa-circle-exclamation"></i> Tienes {{ stats.pendientes }} despacho{{ stats.pendientes|pluralize }} pendiente{{ stats.pendientes|pluralize }} por iniciar.</p>
+    <a href="{% url 'portal_motorista:iniciar_ruta' primer_pendiente.id %}" class="btn btn-primary confirm-action"
+       data-message="¿Iniciar ruta hacia {{ primer_pendiente.direccion_destino }}?">
+        <i class="fa-solid fa-play"></i> Iniciar {{ primer_pendiente.numero_despacho }}
+    </a>
+</div>
+{% elif primer_en_ruta %}
+<div class="action-banner">
+    <p><i class="fa-solid fa-route"></i> Tienes un despacho en ruta: <strong>{{ primer_en_ruta.numero_despacho }}</strong></p>
+    <a href="{% url 'portal_motorista:detalle' primer_en_ruta.id %}" class="btn btn-success">
+        <i class="fa-solid fa-arrow-right"></i> Continuar entrega
+    </a>
+</div>
+{% endif %}
+
+<section class="card">
+    <h3><i class="fa-solid fa-gauge"></i> Resumen de trabajo</h3>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-box"></i></div>
+            <div class="stat-info">
+                <p>Pendientes</p>
+                <h4>{{ stats.pendientes }}</h4>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-route"></i></div>
+            <div class="stat-info">
+                <p>En ruta</p>
+                <h4>{{ stats.en_ruta }}</h4>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-check"></i></div>
+            <div class="stat-info">
+                <p>Entregados hoy</p>
+                <h4>{{ stats.entregados_hoy }}</h4>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="stat-info">
+                <p>Incidencias</p>
+                <h4>{{ stats.incidencias }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="text-right" style="margin-top: 1.5rem;">
+        <a href="{% url 'portal_motorista:mis_despachos' %}" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-list"></i> Ver mis despachos
+        </a>
+    </div>
+</section>
+{% endblock %}

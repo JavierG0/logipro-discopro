@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Reportar Incidencia{% endblock %}
+{% block page_title %}Reportar Incidencia{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="breadcrumbs" aria-label="Ruta de navegación">
+    <a href="{% url 'portal_motorista:mis_despachos' %}">Mis despachos</a> /
+    <a href="{% url 'portal_motorista:detalle' despacho.id %}">{{ despacho.numero_despacho }}</a> /
+    <span>Incidencia</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h3><i class="fa-solid fa-triangle-exclamation"></i> {{ despacho.numero_despacho }}</h3>
+    <p class="despacho-card-meta"><i class="fa-solid fa-location-dot"></i> {{ despacho.direccion_destino }}</p>
+
+    <form method="POST" class="form-submit-loading" style="margin-top: 1.5rem;">
+        {% csrf_token %}
+        <div class="input-group full-width">
+            <label>Tipo de incidencia</label>
+            <div class="radio-group">
+                {% for value, label in tipos_incidencia %}
+                <label>
+                    <input type="radio" name="tipo_incidencia" value="{{ value }}" required>
+                    {{ label }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="input-group full-width">
+            <label for="comentario_incidencia">Comentario (opcional)</label>
+            <textarea id="comentario_incidencia" name="comentario_incidencia" rows="4" placeholder="Describa qué ocurrió..."></textarea>
+        </div>
+        <div class="portal-actions">
+            <button type="submit" class="btn btn-warning btn-xl">
+                <i class="fa-solid fa-save"></i> Guardar incidencia
+            </button>
+            <a href="{% url 'portal_motorista:detalle' despacho.id %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

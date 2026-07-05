@@ -1,463 +1,176 @@
 {% extends 'base.html' %}
-
-{% block title %}Dashboard - Cruz Verde Arica{% endblock %}
-
-{% block page_title %}Dashboard - Control de Entregas{% endblock %}
-
-
+{% load static %}
+{% block title %}Movimientos - Discopro{% endblock %}
+{% block page_title %}Movimientos / Despachos{% endblock %}
 
 {% block content %}
 
-
-
-{% if puede_gestionar_flota %}
-
 <section class="card">
-
-    <h3><i class="fa-solid fa-bars"></i> Acceso Rápido</h3>
-
-    <div class="quick-access" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-
-        <a href="{% url 'farmacia:lista' %}" class="btn btn-lg" style="background-color: #00a86b; padding: 20px; text-align: center; text-decoration: none; color: white; border-radius: 8px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-
-            <i class="fa-solid fa-store" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
-
-            <span>Farmacias</span>
-
-        </a>
-
-        <a href="{% url 'motoristas:lista_motos' %}" class="btn btn-lg" style="background-color: #008c59; padding: 20px; text-align: center; text-decoration: none; color: white; border-radius: 8px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-
-            <i class="fa-solid fa-motorcycle" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
-
-            <span>Motos</span>
-
-        </a>
-
-        <a href="{% url 'motoristas:lista' %}" class="btn btn-lg" style="background-color: #007449; padding: 20px; text-align: center; text-decoration: none; color: white; border-radius: 8px; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-
-            <i class="fa-solid fa-people" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
-
-            <span>Motoristas</span>
-
-        </a>
-
-    </div>
-
-</section>
-
-{% endif %}
-
-
-
-<section class="card">
-
-    <h3><i class="fa-solid fa-plus-circle"></i> Registrar Nueva Entrega</h3>
-
-    <form class="form-grid" action="{% url 'home' %}" method="POST">
-
+    <h3><i class="fa-solid fa-plus-circle"></i> Registrar despacho</h3>
+    <p class="form-hint" style="margin-top: -0.5rem; margin-bottom: 1.25rem;">
+        Seleccione la farmacia de origen; la dirección y los motoristas disponibles se cargan según esa farmacia.
+    </p>
+    <form class="form-grid form-submit-loading" action="{% url 'home' %}" method="POST">
         {% csrf_token %}
-
         <div class="input-group">
-
-            <label for="despacho">N° Despacho / Receta</label>
-
-            <input type="text" id="despacho" name="numero_despacho" placeholder="Ej: 12345678" required>
-
+            <label for="despacho">Código de despacho</label>
+            <input type="text" id="despacho" name="numero_despacho" placeholder="Ej: COD-2001" required>
         </div>
-
-        <div class="input-group">
-
-            <label for="producto">Producto / Receta</label>
-
-            <input type="text" id="producto" name="descripcion" placeholder="Producto o descripción de la receta" required>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="motorista">Asignar Motorista</label>
-
-            <select id="motorista" name="motorista" required>
-
-                <option value="">Seleccionar...</option>
-
-                {% for m in motoristas %}
-
-                    <option value="{{ m.id }}">{{ m.usuario.user.first_name }} {{ m.usuario.user.last_name }}</option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="moto">Asignar Moto</label>
-
-            <select id="moto" name="moto" required>
-
-                <option value="">Seleccionar moto...</option>
-
-                {% for moto in motos %}
-
-                    <option value="{{ moto.id }}">{{ moto.placa }} - {{ moto.marca }} {{ moto.modelo }}</option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="sucursal">Farmacia</label>
-
-            <select id="sucursal" name="sucursal" required>
-
-                <option value="">Seleccionar...</option>
-
-                {% for s in sucursales %}
-
-                    <option value="{{ s.id }}">{{ s.nombre }} - {{ s.ciudad }}</option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="tipo">Tipo de Entrega</label>
-
-            <select id="tipo" name="tipo_movimiento" required>
-
-                <option value="entrega">Entrega de Producto</option>
-
-                <option value="retiro">Retiro de Receta</option>
-
-                <option value="reemplazo">Reemplazo</option>
-
-            </select>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="fecha_programada">Fecha Programada</label>
-
-            <input type="datetime-local" id="fecha_programada" name="fecha_programada" required>
-
-        </div>
-
-
-
-        <div class="input-group full-width" style="grid-column: 1 / -1; margin-top: 10px;">
-
-            <h4 style="margin: 0 0 10px 0; color: #007449;"><i class="fa-solid fa-user"></i> Datos del Destinatario</h4>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="destinatario_nombre">Nombre completo</label>
-
-            <input type="text" id="destinatario_nombre" name="destinatario_nombre" placeholder="Nombre de quien recibe" required>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="destinatario_rut">RUT</label>
-
-            <input type="text" id="destinatario_rut" name="destinatario_rut" placeholder="Ej: 12345678-9" required>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="destinatario_telefono">Teléfono</label>
-
-            <input type="tel" id="destinatario_telefono" name="destinatario_telefono" placeholder="Ej: +56912345678" required>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="destinatario_direccion">Dirección</label>
-
-            <input type="text" id="destinatario_direccion" name="destinatario_direccion" placeholder="Calle y número" required>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="destinatario_comuna">Comuna</label>
-
-            <input type="text" id="destinatario_comuna" name="destinatario_comuna" placeholder="Ej: Arica" required>
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="destinatario_region">Región</label>
-
-            <input type="text" id="destinatario_region" name="destinatario_region" placeholder="Ej: Arica y Parinacota" required>
-
-        </div>
-
-
-
         <div class="input-group full-width">
-
-            <label for="obs">Observaciones</label>
-
-            <textarea id="obs" name="observaciones" rows="2" placeholder="Ej: Paciente requiere entrega urgente..."></textarea>
-
+            <label for="sucursal_origen">Farmacia de origen</label>
+            <select id="sucursal_origen" name="sucursal_origen" required>
+                <option value="">Seleccione farmacia de origen...</option>
+                {% for s in sucursales %}
+                <option value="{{ s.id }}">{{ s.nombre }} — {{ s.comuna }}</option>
+                {% endfor %}
+            </select>
         </div>
-
+        <div class="input-group full-width">
+            <label for="direccion_origen">Dirección de origen (automática)</label>
+            <input type="text" id="direccion_origen" name="direccion_origen" readonly placeholder="Se completa al elegir farmacia">
+            <p class="form-hint">Recuperada desde la base de datos según la farmacia seleccionada.</p>
+        </div>
+        <div class="input-group full-width">
+            <label for="direccion_destino">Dirección de destino (entrega)</label>
+            <input type="text" id="direccion_destino" name="direccion_destino" placeholder="Dirección donde se entrega el despacho" required>
+        </div>
+        <div class="input-group full-width">
+            <label for="motorista">Motorista asignado</label>
+            <select id="motorista" name="motorista" required disabled>
+                <option value="">Primero seleccione farmacia de origen...</option>
+            </select>
+            <p class="form-hint">Solo aparecen motoristas asignados a la farmacia de origen elegida.</p>
+        </div>
         <div class="full-width text-right">
-
-            <button type="submit" class="btn btn-primary">Registrar Entrega</button>
-
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fa-solid fa-paper-plane"></i> Registrar movimiento
+            </button>
         </div>
-
     </form>
-
 </section>
-
-
 
 <section class="card">
-
     <div class="card-header-action">
-
-        <h3><i class="fa-solid fa-clock"></i> Movimientos Activos</h3>
-
+        <h3><i class="fa-solid fa-clock"></i> Movimientos activos</h3>
         <div class="header-actions">
-
-            <a href="{% url 'movimientos:exportar' %}?{{ request.GET.urlencode }}" class="btn btn-secondary"><i class="fa-solid fa-file-excel"></i> Descargar Excel</a>
-
+            <a href="{% url 'movimientos:exportar' %}?{{ request.GET.urlencode }}" class="btn btn-secondary">
+                <i class="fa-solid fa-file-excel"></i> Descargar Excel
+            </a>
         </div>
-
     </div>
 
-
-
-    <form method="GET" class="filters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 15px; align-items: end;">
-
+    <form method="GET" class="filters-bar">
         <div class="input-group">
-
-            <label for="q_despacho">N° Despacho</label>
-
-            <input type="text" id="q_despacho" name="q_despacho" value="{{ filtros.q_despacho|default:'' }}" placeholder="Buscar...">
-
+            <label for="q_despacho">N° despacho</label>
+            <input type="text" id="q_despacho" name="q_despacho" value="{{ filtros.q_despacho|default:'' }}" placeholder="Buscar código...">
         </div>
-
         <div class="input-group">
-
-            <label for="q_motorista">Motorista</label>
-
-            <input type="text" id="q_motorista" name="q_motorista" value="{{ filtros.q_motorista|default:'' }}" placeholder="Nombre...">
-
+            <label for="q_direccion">Dirección</label>
+            <input type="text" id="q_direccion" name="q_direccion" value="{{ filtros.q_direccion|default:'' }}" placeholder="Origen o destino...">
         </div>
-
-        <div class="input-group">
-
-            <label for="q_moto">Moto (placa)</label>
-
-            <input type="text" id="q_moto" name="q_moto" value="{{ filtros.q_moto|default:'' }}" placeholder="Placa...">
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="q_fecha">Fecha</label>
-
-            <input type="date" id="q_fecha" name="q_fecha" value="{{ filtros.q_fecha|default:'' }}">
-
-        </div>
-
-        <div class="input-group">
-
-            <label for="q_destinatario">Destinatario / RUT</label>
-
-            <input type="text" id="q_destinatario" name="q_destinatario" value="{{ filtros.q_destinatario|default:'' }}" placeholder="Nombre o RUT...">
-
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-
+        <div class="filters-bar-actions">
             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i> Buscar</button>
-
             <a href="{% url 'home' %}" class="btn btn-outline-secondary">Limpiar</a>
-
         </div>
-
     </form>
 
-    
-
-    <div class="table-responsive">
-
+    <div class="table-responsive table-desktop">
         <table class="table">
-
             <thead>
-
                 <tr>
-
-                    <th>N° Despacho</th>
-
-                    <th>Producto</th>
-
-                    <th>Destinatario</th>
-
+                    <th>Código</th>
+                    <th>Origen</th>
+                    <th>Destino</th>
                     <th>Motorista</th>
-
-                    <th>Moto</th>
-
-                    <th>Tipo</th>
-
                     <th>Estado</th>
-
-                    <th>Fecha Programada</th>
-
-                    <th>Acciones</th>
-
+                    <th>Registro</th>
+                    <th></th>
                 </tr>
-
             </thead>
-
             <tbody>
-
                 {% for m in movimientos %}
-
                 <tr>
-
                     <td><strong>{{ m.numero_despacho }}</strong></td>
-
-                    <td>{{ m.descripcion|truncatechars:30 }}</td>
-
-                    <td>{{ m.destinatario_nombre|default:"—" }}</td>
-
-                    <td>{% if m.motorista %}{{ m.motorista.usuario.user.first_name }} {{ m.motorista.usuario.user.last_name }}{% else %}Sin asignar{% endif %}</td>
-
-                    <td>{% if m.motorista and m.motorista.moto %}{{ m.motorista.moto.placa }}{% else %}—{% endif %}</td>
-
-                    <td>{{ m.get_tipo_movimiento_display }}</td>
-
+                    <td>
+                        {% if m.sucursal %}<small>{{ m.sucursal.nombre }}</small><br>{% endif %}
+                        {{ m.direccion_origen|default:"—" }}
+                    </td>
+                    <td>{{ m.direccion_destino }}</td>
+                    <td>{% if m.motorista %}{{ m.motorista.usuario.user.get_full_name }}{% else %}—{% endif %}</td>
                     <td><span class="badge badge-{{ m.estado }}">{{ m.get_estado_display }}</span></td>
-
-                    <td>{{ m.fecha_programada|date:"d/m/Y H:i" }}</td>
-
+                    <td>{{ m.creado_en|date:"d/m/Y H:i" }}</td>
                     <td><a href="{% url 'movimientos:detalle' m.id %}" class="btn btn-sm btn-info">Ver</a></td>
-
                 </tr>
-
                 {% empty %}
-
                 <tr>
-
-                    <td colspan="9" class="text-center">No hay movimientos registrados o que coincidan con la búsqueda.</td>
-
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-box-open"></i>
+                            <p><strong>No hay movimientos todavía</strong></p>
+                            <p>Use el formulario de arriba para registrar el primer despacho.</p>
+                        </div>
+                    </td>
                 </tr>
-
                 {% endfor %}
-
             </tbody>
-
         </table>
-
     </div>
 
+    <div class="movimiento-cards">
+        {% for m in movimientos %}
+        <div class="despacho-card">
+            <div class="despacho-card-header">
+                <h4>{{ m.numero_despacho }}</h4>
+                <span class="badge badge-{{ m.estado }}">{{ m.get_estado_display }}</span>
+            </div>
+            <p class="despacho-card-meta"><i class="fa-solid fa-store"></i> Origen: {{ m.direccion_origen|default:"—" }}</p>
+            <p class="despacho-card-meta"><i class="fa-solid fa-location-dot"></i> Destino: {{ m.direccion_destino }}</p>
+            <div class="despacho-card-actions">
+                <a href="{% url 'movimientos:detalle' m.id %}" class="btn btn-info btn-sm">Ver detalle</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <p><strong>No hay movimientos todavía</strong></p>
+        </div>
+        {% endfor %}
+    </div>
 </section>
-
-
 
 {% if puede_gestionar_flota %}
-
 <section class="card">
-
-    <h3><i class="fa-solid fa-chart-bar"></i> Estadísticas del Día</h3>
-
-    <div class="stats-grid">
-
-        <div class="stat-card">
-
-            <div class="stat-icon"><i class="fa-solid fa-boxes"></i></div>
-
-            <div class="stat-info">
-
-                <p>Movimientos Completados</p>
-
-                <h4 id="stat-completados">{{ stats.completados }}</h4>
-
-            </div>
-
-        </div>
-
-        <div class="stat-card">
-
-            <div class="stat-icon"><i class="fa-solid fa-truck"></i></div>
-
-            <div class="stat-info">
-
-                <p>En Tránsito</p>
-
-                <h4 id="stat-transito">{{ stats.transito }}</h4>
-
-            </div>
-
-        </div>
-
-        <div class="stat-card">
-
-            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-
-            <div class="stat-info">
-
-                <p>Motoristas Disponibles</p>
-
-                <h4 id="stat-disponibles">{{ stats.disponibles }}</h4>
-
-            </div>
-
-        </div>
-
+    <h3><i class="fa-solid fa-bolt"></i> Acceso rápido</h3>
+    <div class="quick-access">
+        <a href="{% url 'farmacia:lista' %}" class="quick-access-btn">
+            <i class="fa-solid fa-store"></i><span>Farmacias origen</span>
+        </a>
+        <a href="{% url 'motoristas:lista_motos' %}" class="quick-access-btn">
+            <i class="fa-solid fa-motorcycle"></i><span>Motos</span>
+        </a>
+        <a href="{% url 'motoristas:lista' %}" class="quick-access-btn">
+            <i class="fa-solid fa-people"></i><span>Motoristas</span>
+        </a>
     </div>
-
 </section>
 
+<section class="card">
+    <h3><i class="fa-solid fa-chart-bar"></i> Resumen</h3>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-boxes"></i></div>
+            <div class="stat-info"><p>Movimientos</p><h4>{{ stats.movimientos }}</h4></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info"><p>Motoristas disponibles</p><h4>{{ stats.disponibles }}</h4></div>
+        </div>
+    </div>
+</section>
 {% endif %}
 
 {% endblock %}
-
-
 
 {% block extra_js %}
-
-<script>
-
-    document.addEventListener('DOMContentLoaded', function() {
-
-        const alerts = document.querySelectorAll('.alert');
-
-        alerts.forEach(alert => {
-
-            alert.addEventListener('click', function() {
-
-                this.style.display = 'none';
-
-            });
-
-        });
-
-    });
-
-</script>
-
+<script src="{% static 'js/farmacia-origen.js' %}"></script>
 {% endblock %}
-
-

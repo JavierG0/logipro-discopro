@@ -1,10 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Prefetch
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+
 from apps.usuarios.permissions import administrador_requerido
-from .models import Motorista, Moto, Sucursal
+from .geografia import comunas, provincias
+from .models import Motorista, Moto, Sucursal, AsignacionOperativa
 from .forms import MotoristaForm, MotoristaCreateForm, MotoForm, SucursalForm
+
+
+MOTORISTA_PREFETCH = Prefetch(
+    'asignaciones',
+    queryset=AsignacionOperativa.objects.filter(activa=True).select_related('moto', 'sucursal'),
+)
 
 
 # ==================== SUCURSALES ====================
@@ -19,7 +29,9 @@ def lista_sucursales(request):
     if busqueda:
         sucursales = sucursales.filter(
             Q(nombre__icontains=busqueda) |
-            Q(ciudad__icontains=busqueda) |
+            Q(region__icontains=busqueda) |
+            Q(provincia__icontains=busqueda) |
+            Q(comuna__icontains=busqueda) |
             Q(direccion__icontains=busqueda)
         )
     
@@ -78,23 +90,66 @@ def eliminar_sucursal(request, pk):
     return render(request, 'sucursal_eliminar.html', {'sucursal': sucursal})
 
 
+@require_GET
+@login_required(login_url='usuarios:login')
+def api_provincias(request):
+    region = request.GET.get('region', '')
+    return JsonResponse({'provincias': provincias(region)})
+
+
+@require_GET
+@login_required(login_url='usuarios:login')
+def api_comunas(request):
+    region = request.GET.get('region', '')
+    provincia = request.GET.get('provincia', '')
+    return JsonResponse({'comunas': comunas(region, provincia)})
+
+
+@require_GET
+@login_required(login_url='usuarios:login')
+def api_farmacia_motoristas(request, pk):
+    """Motoristas asignados a una farmacia de origen (para registro de despachos)."""
+    sucursal = get_object_or_404(Sucursal, pk=pk, activo=True)
+    motoristas = Motorista.objects.filter(
+        activo=True,
+        asignaciones__sucursal=sucursal,
+        asignaciones__activa=True,
+    ).select_related('usuario__user').prefetch_related(MOTORISTA_PREFETCH).distinct()
+    data = []
+    for m in motoristas:
+        moto = m.moto_actual
+        data.append({
+            'id': m.id,
+            'nombre': m.usuario.user.get_full_name(),
+            'moto': moto.placa if moto else None,
+        })
+    return JsonResponse({'motoristas': data})
+
+
+@require_GET
+@login_required(login_url='usuarios:login')
+def api_farmacia_direccion(request, pk):
+    sucursal = get_object_or_404(Sucursal, pk=pk, activo=True)
+    return JsonResponse({
+        'direccion': sucursal.direccion_completa,
+        'direccion_calle': sucursal.direccion,
+        'nombre': sucursal.nombre,
+    })
+
+
 # ==================== MOTOS ====================
 
 @login_required(login_url='usuarios:login')
 @administrador_requerido
 def lista_motos(request):
     """Listado de motos"""
-    motos = Moto.objects.select_related('sucursal').all()
+    motos = Moto.objects.prefetch_related('asignaciones__motorista__usuario__user').all()
     
     estado = request.GET.get('estado')
-    sucursal = request.GET.get('sucursal')
     busqueda = request.GET.get('busqueda')
     
     if estado:
         motos = motos.filter(estado=estado)
-    
-    if sucursal:
-        motos = motos.filter(sucursal_id=sucursal)
     
     if busqueda:
         motos = motos.filter(
@@ -103,11 +158,8 @@ def lista_motos(request):
             Q(modelo__icontains=busqueda)
         )
     
-    sucursales = Sucursal.objects.all()
-    
     return render(request, 'motos.html', {
         'motos': motos,
-        'sucursales': sucursales,
         'estados': Moto._meta.get_field('estado').choices
     })
 
@@ -168,7 +220,7 @@ def eliminar_moto(request, pk):
 @administrador_requerido
 def lista_motoristas(request):
     """Listado de motoristas"""
-    motoristas = Motorista.objects.select_related('usuario__user', 'moto', 'sucursal').all()
+    motoristas = Motorista.objects.select_related('usuario__user').prefetch_related(MOTORISTA_PREFETCH).all()
     
     # Filtros
     estado = request.GET.get('estado')
@@ -179,14 +231,17 @@ def lista_motoristas(request):
         motoristas = motoristas.filter(estado=estado)
     
     if sucursal:
-        motoristas = motoristas.filter(sucursal_id=sucursal)
+        motoristas = motoristas.filter(asignaciones__sucursal_id=sucursal, asignaciones__activa=True)
     
     if busqueda:
         motoristas = motoristas.filter(
             Q(usuario__user__first_name__icontains=busqueda) |
             Q(usuario__user__last_name__icontains=busqueda) |
             Q(usuario__rut__icontains=busqueda) |
-            Q(moto__placa__icontains=busqueda)
+            Q(asignaciones__moto__placa__icontains=busqueda) |
+            Q(region__icontains=busqueda) |
+            Q(provincia__icontains=busqueda) |
+            Q(comuna__icontains=busqueda)
         )
     
     sucursales = Sucursal.objects.all()
@@ -202,7 +257,10 @@ def lista_motoristas(request):
 @administrador_requerido
 def detalle_motorista(request, pk):
     """Detalle de un motorista"""
-    motorista = get_object_or_404(Motorista.objects.select_related('usuario__user', 'moto', 'sucursal'), pk=pk)
+    motorista = get_object_or_404(
+        Motorista.objects.select_related('usuario__user').prefetch_related(MOTORISTA_PREFETCH),
+        pk=pk,
+    )
     return render(request, 'motorista_detalle.html', {'motorista': motorista})
 
 

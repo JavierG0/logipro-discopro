@@ -8,4 +8,8 @@ urlpatterns = [
     path('crear/', views.crear_sucursal, name='crear'),
     path('<int:pk>/editar/', views.editar_sucursal, name='editar'),
     path('<int:pk>/eliminar/', views.eliminar_sucursal, name='eliminar'),
+    path('api/provincias/', views.api_provincias, name='api_provincias'),
+    path('api/comunas/', views.api_comunas, name='api_comunas'),
+    path('api/<int:pk>/direccion/', views.api_farmacia_direccion, name='api_direccion'),
+    path('api/<int:pk>/motoristas/', views.api_farmacia_motoristas, name='api_motoristas'),
 ]

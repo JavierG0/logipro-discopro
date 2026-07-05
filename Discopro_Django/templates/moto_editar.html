@@ -52,14 +52,6 @@
         </div>
         
         <div class="form-group">
-            <label for="{{ form.sucursal.id_for_label }}">{{ form.sucursal.label }}</label>
-            {{ form.sucursal }}
-            {% if form.sucursal.errors %}
-                <div class="alert alert-danger">{{ form.sucursal.errors }}</div>
-            {% endif %}
-        </div>
-        
-        <div class="form-group">
             <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
             {{ form.estado }}
             {% if form.estado.errors %}

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from apps.usuarios.models import Usuario, Departamento
-from apps.motoristas.models import Motorista
+from apps.motoristas.models import Motorista, Moto
 from apps.movimientos.models import Movimiento
 from apps.motoristas.models import Sucursal
 from apps.reportes.models import Reporte
@@ -24,29 +24,43 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
 class MotoristaSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializer()
-    
+    moto = serializers.SerializerMethodField()
+    sucursal = serializers.SerializerMethodField()
+
     class Meta:
         model = Motorista
         fields = ['id', 'usuario', 'licencia', 'tipo_licencia', 'vigencia_licencia',
-                  'vehiculo_placa', 'marca_vehiculo', 'modelo_vehiculo', 'estado',
+                  'moto', 'sucursal', 'region', 'provincia', 'comuna', 'direccion', 'estado',
                   'movimientos_completados', 'calificacion_promedio', 'activo']
+
+    def get_moto(self, obj):
+        moto = obj.moto_actual
+        return MotoSerializer(moto).data if moto else None
+
+    def get_sucursal(self, obj):
+        sucursal = obj.sucursal_actual
+        return SucursalSerializer(sucursal).data if sucursal else None
+
+
+class MotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Moto
+        fields = ['id', 'placa', 'marca', 'modelo', 'año', 'color', 'estado', 'activo']
 
 
 class SucursalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sucursal
-        fields = ['id', 'nombre', 'direccion', 'ciudad', 'telefono', 'activo']
+        fields = ['id', 'nombre', 'region', 'provincia', 'comuna', 'direccion', 'telefono', 'encargado_nombre', 'activo']
 
 
 class MovimientoSerializer(serializers.ModelSerializer):
-    motorista = MotoristaSerializer()
-    sucursal = SucursalSerializer()
-    
     class Meta:
         model = Movimiento
-        fields = ['id', 'numero_despacho', 'motorista', 'sucursal', 'tipo_movimiento',
-                  'estado', 'descripcion', 'fecha_programada', 'fecha_inicio',
-                  'fecha_cierre', 'estado', 'calificacion', 'comentarios', 'creado_en']
+        fields = [
+            'id', 'numero_despacho', 'sucursal', 'direccion_origen', 'direccion_destino',
+            'motorista', 'estado', 'creado_en', 'actualizado_en',
+        ]
 
 
 class ReporteSerializer(serializers.ModelSerializer):

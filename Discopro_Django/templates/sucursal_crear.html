@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Crear Sucursal - Discopro{% endblock %}
-{% block page_title %}Crear Nueva Sucursal{% endblock %}
+{% load static %}
+{% block title %}Crear Farmacia - Discopro{% endblock %}
+{% block page_title %}Crear Nueva Farmacia{% endblock %}
 
 {% block content %}
 <section class="card">
     <div class="card-header-action">
-        <h3><i class="fa-solid fa-store"></i> Agregar Sucursal</h3>
+        <h3><i class="fa-solid fa-store"></i> Agregar Farmacia</h3>
     </div>
     
     <form method="POST" class="form-container">
@@ -20,10 +21,26 @@
         </div>
         
         <div class="form-group">
-            <label for="{{ form.ciudad.id_for_label }}">{{ form.ciudad.label }}</label>
-            {{ form.ciudad }}
-            {% if form.ciudad.errors %}
-                <div class="alert alert-danger">{{ form.ciudad.errors }}</div>
+            <label for="{{ form.region.id_for_label }}">{{ form.region.label }}</label>
+            {{ form.region }}
+            {% if form.region.errors %}
+                <div class="alert alert-danger">{{ form.region.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.provincia.id_for_label }}">{{ form.provincia.label }}</label>
+            {{ form.provincia }}
+            {% if form.provincia.errors %}
+                <div class="alert alert-danger">{{ form.provincia.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.comuna.id_for_label }}">{{ form.comuna.label }}</label>
+            {{ form.comuna }}
+            {% if form.comuna.errors %}
+                <div class="alert alert-danger">{{ form.comuna.errors }}</div>
             {% endif %}
         </div>
         
@@ -44,10 +61,11 @@
         </div>
         
         <div class="form-group">
-            <label for="{{ form.encargado.id_for_label }}">{{ form.encargado.label }}</label>
-            {{ form.encargado }}
-            {% if form.encargado.errors %}
-                <div class="alert alert-danger">{{ form.encargado.errors }}</div>
+            <label for="{{ form.encargado_nombre.id_for_label }}">{{ form.encargado_nombre.label }}</label>
+            {{ form.encargado_nombre }}
+            <p class="form-hint">Solo referencia; la farmacia no accede al sistema.</p>
+            {% if form.encargado_nombre.errors %}
+                <div class="alert alert-danger">{{ form.encargado_nombre.errors }}</div>
             {% endif %}
         </div>
         
@@ -60,9 +78,17 @@
         </div>
         
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Guardar Sucursal</button>
+            <button type="submit" class="btn btn-primary">Guardar Farmacia</button>
             <a href="{% url 'farmacia:lista' %}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('id_region')?.setAttribute('data-api-provincias', '{% url "farmacia:api_provincias" %}');
+    document.getElementById('id_region')?.setAttribute('data-api-comunas', '{% url "farmacia:api_comunas" %}');
+</script>
+<script src="{% static 'js/geografia.js' %}"></script>
 {% endblock %}

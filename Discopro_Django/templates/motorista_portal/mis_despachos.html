@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Mis Despachos{% endblock %}
+{% block page_title %}Mis Despachos{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="breadcrumbs" aria-label="Ruta de navegación">
+    <a href="{% url 'portal_motorista:inicio' %}">Inicio</a> / <span>Mis despachos</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h3><i class="fa-solid fa-route"></i> Despachos asignados</h3>
+    {% for despacho in despachos %}
+    <article class="despacho-card">
+        <div class="despacho-card-header">
+            <h4>{{ despacho.numero_despacho }}</h4>
+            <span class="badge badge-{{ despacho.estado }}">{{ despacho.get_estado_display }}</span>
+        </div>
+        <p class="despacho-card-meta"><i class="fa-solid fa-location-dot"></i> {{ despacho.direccion_destino }}</p>
+        {% if despacho.sucursal %}
+        <p class="despacho-card-meta"><i class="fa-solid fa-store"></i> {{ despacho.sucursal.nombre }}</p>
+        {% endif %}
+        <p class="despacho-card-meta"><i class="fa-solid fa-clock"></i> Registrado {{ despacho.creado_en|date:"d/m/Y H:i" }}</p>
+        <div class="despacho-card-actions">
+            <a href="https://www.google.com/maps/search/?api=1&query={{ despacho.direccion_destino|urlencode }}"
+               class="btn btn-secondary btn-sm" target="_blank" rel="noopener">
+                <i class="fa-solid fa-map-location-dot"></i> Abrir en Maps
+            </a>
+            {% if despacho.estado == 'pendiente' %}
+            <a href="{% url 'portal_motorista:iniciar_ruta' despacho.id %}" class="btn btn-primary confirm-action"
+               data-message="¿Iniciar ruta hacia {{ despacho.direccion_destino }}?">
+                <i class="fa-solid fa-play"></i> Iniciar ruta
+            </a>
+            {% else %}
+            <a href="{% url 'portal_motorista:detalle' despacho.id %}" class="btn btn-info">
+                <i class="fa-solid fa-eye"></i> Ver detalle
+            </a>
+            {% endif %}
+        </div>
+    </article>
+    {% empty %}
+    <div class="empty-state">
+        <i class="fa-solid fa-check-circle"></i>
+        <p><strong>¡Al día!</strong></p>
+        <p>No tienes despachos pendientes ni en ruta en este momento.</p>
+        <a href="{% url 'portal_motorista:historial' %}" class="btn btn-secondary" style="margin-top: 1rem;">Ver historial</a>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

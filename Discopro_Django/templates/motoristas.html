@@ -44,7 +44,10 @@
                     <th>Nombre</th>
                     <th>Licencia</th>
                     <th>Moto</th>
-                    <th>Sucursal</th>
+                    <th>Farmacia</th>
+                    <th>Región</th>
+                    <th>Provincia</th>
+                    <th>Comuna</th>
                     <th>Estado</th>
                     <th>Movimientos</th>
                     <th>Acciones</th>
@@ -58,6 +61,9 @@
                     <td>{{ m.licencia }}</td>
                     <td>{{ m.moto.placa|default:"No asignada" }}</td>
                     <td>{{ m.sucursal.nombre|default:"No asignada" }}</td>
+                    <td>{{ m.region|default:"No asignada" }}</td>
+                    <td>{{ m.provincia|default:"No asignada" }}</td>
+                    <td>{{ m.comuna|default:"No asignada" }}</td>
                     <td><span class="badge badge-{{ m.estado }}">{{ m.get_estado_display }}</span></td>
                     <td>{{ m.movimientos_completados }}</td>
                     <td>
@@ -67,7 +73,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="8" class="text-center">No hay motoristas registrados o que coincidan con la búsqueda.</td>
+                    <td colspan="11" class="text-center">No hay motoristas registrados o que coincidan con la búsqueda.</td>
                 </tr>
                 {% endfor %}
             </tbody>

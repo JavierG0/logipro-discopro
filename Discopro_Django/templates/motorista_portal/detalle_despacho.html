@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Detalle Despacho{% endblock %}
+{% block page_title %}Detalle del Despacho{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="breadcrumbs" aria-label="Ruta de navegación">
+    <a href="{% url 'portal_motorista:inicio' %}">Inicio</a> /
+    <a href="{% url 'portal_motorista:mis_despachos' %}">Mis despachos</a> /
+    <span>{{ despacho.numero_despacho }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="despacho-card-header">
+        <h3 style="margin:0;"><i class="fa-solid fa-box"></i> {{ despacho.numero_despacho }}</h3>
+        <span class="badge badge-{{ despacho.estado }}">{{ despacho.get_estado_display }}</span>
+    </div>
+
+    <dl style="margin-top: 1.5rem;">
+        <dt>Farmacia de origen</dt>
+        <dd>{% if despacho.sucursal %}{{ despacho.sucursal.nombre }}{% else %}Sin farmacia asignada{% endif %}</dd>
+
+        <dt>Dirección de origen</dt>
+        <dd>{{ despacho.direccion_origen|default:"—" }}</dd>
+
+        <dt>Dirección de destino</dt>
+        <dd>{{ despacho.direccion_destino }}</dd>
+
+        <dt>Registrado</dt>
+        <dd>{{ despacho.creado_en|date:"d/m/Y H:i" }}</dd>
+
+        {% if despacho.estado == 'incidencia' %}
+        <dt>Tipo de incidencia</dt>
+        <dd>{{ despacho.get_tipo_incidencia_display|default:"Sin tipo" }}</dd>
+        <dt>Comentario</dt>
+        <dd>{{ despacho.comentario_incidencia|default:"Sin comentario" }}</dd>
+        {% endif %}
+    </dl>
+
+    <div style="margin-top: 1rem;">
+        <a href="https://www.google.com/maps/search/?api=1&query={{ despacho.direccion_destino|urlencode }}"
+           class="btn btn-secondary" target="_blank" rel="noopener">
+            <i class="fa-solid fa-map-location-dot"></i> Abrir dirección en Google Maps
+        </a>
+    </div>
+
+    <div class="portal-actions">
+        {% if despacho.estado == 'pendiente' %}
+        <a href="{% url 'portal_motorista:iniciar_ruta' despacho.id %}" class="btn btn-primary btn-xl confirm-action"
+           data-message="¿Confirmas que inicias la ruta hacia {{ despacho.direccion_destino }}?">
+            <i class="fa-solid fa-play"></i> Iniciar ruta
+        </a>
+        {% endif %}
+        {% if despacho.estado == 'pendiente' or despacho.estado == 'en_ruta' %}
+        <a href="{% url 'portal_motorista:entregado' despacho.id %}" class="btn btn-success btn-xl confirm-action"
+           data-message="¿Confirmas que entregaste el despacho {{ despacho.numero_despacho }}?">
+            <i class="fa-solid fa-check"></i> Marcar entregado
+        </a>
+        <a href="{% url 'portal_motorista:incidencia' despacho.id %}" class="btn btn-warning btn-xl">
+            <i class="fa-solid fa-triangle-exclamation"></i> Reportar problema
+        </a>
+        {% endif %}
+        <a href="{% url 'portal_motorista:mis_despachos' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+    </div>
+</section>
+{% endblock %}

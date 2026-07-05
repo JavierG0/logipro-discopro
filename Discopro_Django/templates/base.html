@@ -4,32 +4,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Cruz Verde{% endblock %}</title>
-    <!-- Font Awesome -->
+    <title>{% block title %}Discopro Logística{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Estilos propios -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     {% if user.is_authenticated %}
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <i class="fa-solid fa-pills"></i>
+                <i class="fa-solid fa-truck-fast"></i>
                 <div>
-                    <h1>Cruz Verde</h1>
-                    <small style="font-size: 0.7rem; opacity: 0.8;">Chile</small>
+                    <h1>Discopro</h1>
+                    <small style="font-size: 0.7rem; opacity: 0.8;">Logística de despachos</small>
                 </div>
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                    {% with ns=request.resolver_match.namespace url=request.resolver_match.url_name %}
+                    {% if user_rol == 'motorista' %}
+                    <li class="{% if url == 'inicio' %}active{% endif %}">
+                        <a href="{% url 'portal_motorista:inicio' %}"><i class="fa-solid fa-house"></i> Inicio</a>
+                    </li>
+                    <li class="{% if url == 'mis_despachos' or url == 'detalle' or url == 'incidencia' or url == 'iniciar_ruta' or url == 'entregado' %}active{% endif %}">
+                        <a href="{% url 'portal_motorista:mis_despachos' %}"><i class="fa-solid fa-route"></i> Mis despachos</a>
+                    </li>
+                    <li class="{% if url == 'perfil' %}active{% endif %}">
+                        <a href="{% url 'portal_motorista:perfil' %}"><i class="fa-solid fa-user"></i> Mi perfil</a>
+                    </li>
+                    <li class="{% if url == 'mi_moto' %}active{% endif %}">
+                        <a href="{% url 'portal_motorista:mi_moto' %}"><i class="fa-solid fa-motorcycle"></i> Mi moto</a>
+                    </li>
+                    <li class="{% if url == 'historial' %}active{% endif %}">
+                        <a href="{% url 'portal_motorista:historial' %}"><i class="fa-solid fa-clock-rotate-left"></i> Historial</a>
+                    </li>
+                    {% else %}
+                    <li class="{% if url == 'home' %}active{% endif %}">
+                        <a href="{% url 'home' %}"><i class="fa-solid fa-truck-fast"></i> Movimientos</a>
+                    </li>
                     {% if puede_gestionar_flota %}
-                    <li><a href="{% url 'farmacia:lista' %}"><i class="fa-solid fa-store"></i> Farmacias</a></li>
-                    <li><a href="{% url 'motoristas:lista' %}"><i class="fa-solid fa-people"></i> Motoristas</a></li>
+                    <li class="{% if ns == 'farmacia' %}active{% endif %}">
+                        <a href="{% url 'farmacia:lista' %}"><i class="fa-solid fa-store"></i> Farmacias</a>
+                    </li>
+                    <li class="{% if url == 'lista_motos' or url == 'crear_moto' or url == 'editar_moto' %}active{% endif %}">
+                        <a href="{% url 'motoristas:lista_motos' %}"><i class="fa-solid fa-motorcycle"></i> Motos</a>
+                    </li>
+                    <li class="{% if ns == 'motoristas' and url != 'lista_motos' and url != 'crear_moto' and url != 'editar_moto' and url != 'eliminar_moto' %}active{% endif %}">
+                        <a href="{% url 'motoristas:lista' %}"><i class="fa-solid fa-people"></i> Motoristas</a>
+                    </li>
+                    {% if es_administrador_sistema %}
+                    <li class="{% if ns == 'usuarios' and url == 'lista_sistema' or url == 'crear_sistema' or url == 'editar_sistema' %}active{% endif %}">
+                        <a href="{% url 'usuarios:lista_sistema' %}"><i class="fa-solid fa-users-gear"></i> Usuarios del sistema</a>
+                    </li>
                     {% endif %}
+                    {% endif %}
+                    {% endif %}
+                    {% endwith %}
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -37,15 +69,23 @@
             </div>
         </aside>
 
-        <!-- Main content -->
         <main class="main-content">
             <header class="top-header">
                 <div class="header-left">
+                    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
                     <h2>{% block page_title %}{% endblock %}</h2>
                 </div>
                 <div class="header-right">
                     <div class="user-profile">
-                        <span>{{ user.get_full_name }}</span>
+                        <div class="user-profile-info">
+                            <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                            <span class="user-meta">
+                                {% if user_rol_etiqueta %}<span class="role-badge">{{ user_rol_etiqueta }}</span>{% endif %}
+                                {% if motorista_farmacia %} · {{ motorista_farmacia }}{% endif %}
+                            </span>
+                        </div>
                         <i class="fa-solid fa-user-circle"></i>
                     </div>
                 </div>
@@ -55,16 +95,17 @@
             <div class="alerts">
                 {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                    <button type="button" class="alert-close">&times;</button>
+                    <span>{{ message }}</span>
+                    <button type="button" class="alert-close" aria-label="Cerrar">&times;</button>
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
 
             <div class="content">
+                {% block breadcrumbs %}{% endblock %}
     {% endif %}
-    
+
                 {% block content %}{% endblock %}
 
     {% if user.is_authenticated %}

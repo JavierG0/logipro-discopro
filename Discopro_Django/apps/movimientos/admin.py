@@ -4,24 +4,18 @@ from .models import Movimiento
 
 @admin.register(Movimiento)
 class MovimientoAdmin(admin.ModelAdmin):
-    list_display = ('numero_despacho', 'tipo_movimiento', 'estado', 'motorista', 'sucursal', 'fecha_programada')
-    list_filter = ('estado', 'tipo_movimiento', 'fecha_programada', 'sucursal')
-    search_fields = ('numero_despacho', 'motorista__usuario__user__username')
+    list_display = ('numero_despacho', 'direccion_destino', 'motorista', 'sucursal', 'estado', 'creado_en')
+    list_filter = ('estado', 'sucursal', 'creado_en')
+    search_fields = ('numero_despacho', 'direccion_destino', 'motorista__usuario__user__first_name', 'motorista__usuario__user__last_name')
     fieldsets = (
         ('Información General', {
-            'fields': ('numero_despacho', 'tipo_movimiento', 'estado')
+            'fields': ('numero_despacho', 'direccion_destino', 'motorista', 'sucursal', 'estado')
         }),
-        ('Datos de Asignación', {
-            'fields': ('motorista', 'sucursal', 'fecha_programada')
+        ('Incidencia', {
+            'fields': ('tipo_incidencia', 'comentario_incidencia')
         }),
-        ('Descripción', {
-            'fields': ('descripcion', 'observaciones')
-        }),
-        ('Seguimiento', {
-            'fields': ('fecha_inicio', 'fecha_cierre', 'hora_estimada_entrega', 'distancia_km', 'duracion_minutos')
-        }),
-        ('Confirmación', {
-            'fields': ('firma_confirmacion', 'calificacion', 'comentarios')
+        ('Entrega', {
+            'fields': ('entregado_en',)
         }),
         ('Metadata', {
             'fields': ('creado_en', 'actualizado_en'),

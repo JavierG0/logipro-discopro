@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Mi Moto{% endblock %}
+{% block page_title %}Mi Moto{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h3><i class="fa-solid fa-motorcycle"></i> Información de moto</h3>
+    {% if motorista.moto %}
+        <dl>
+            <dt>Patente:</dt>
+            <dd>{{ motorista.moto.placa }}</dd>
+            <dt>Marca:</dt>
+            <dd>{{ motorista.moto.marca }}</dd>
+            <dt>Modelo:</dt>
+            <dd>{{ motorista.moto.modelo }}</dd>
+            <dt>Estado:</dt>
+            <dd>{% if motorista.moto.activo %}Activa{% else %}Inactiva{% endif %}</dd>
+        </dl>
+    {% else %}
+        <p>No tienes moto asignada.</p>
+    {% endif %}
+</section>
+{% endblock %}

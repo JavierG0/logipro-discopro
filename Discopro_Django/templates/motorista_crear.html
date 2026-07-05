@@ -1,47 +1,38 @@
 {% extends 'base.html' %}
-
-{% block title %}Crear Motorista - Discopro{% endblock %}
-{% block page_title %}Crear Nuevo Motorista{% endblock %}
+{% load static %}
+{% block title %}Crear Motorista{% endblock %}
+{% block page_title %}Crear perfil de motorista{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0"><i class="fa-solid fa-user-plus"></i> Formulario de Creación de Motorista</h4>
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                {% csrf_token %}
-                
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.non_field_errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
+<section class="card">
+    <h3><i class="fa-solid fa-user-plus"></i> Datos operativos del motorista</h3>
+    <p class="form-hint" style="margin-bottom: 1.25rem;">
+        Primero cree el usuario motorista en <a href="{% url 'usuarios:crear_sistema' %}">Administración de usuarios</a>.
+        Aquí solo se registran licencia, geografía y asignaciones de moto/farmacia.
+    </p>
 
-                <div class="row">
-                    {% for field in form %}
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.help_text %}
-                                <small class="form-text text-muted">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% for error in field.errors %}
-                                <div class="text-danger small mt-1">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-save"></i> Guardar Motorista</button>
-                    <a href="{% url 'motoristas:lista' %}" class="btn btn-secondary"><i class="fa-solid fa-xmark"></i> Cancelar</a>
-                </div>
-            </form>
+    <form method="POST" class="form-grid form-submit-loading">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="input-group {% if field.name in 'direccion observaciones' %}full-width{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<p class="form-hint">{{ field.help_text }}</p>{% endif %}
+            {% for error in field.errors %}<div class="alert alert-danger">{{ error }}</div>{% endfor %}
         </div>
-    </div>
-</div>
+        {% endfor %}
+        <div class="full-width portal-actions">
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-save"></i> Guardar motorista</button>
+            <a href="{% url 'motoristas:lista' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('id_region')?.setAttribute('data-api-provincias', '{% url "farmacia:api_provincias" %}');
+    document.getElementById('id_region')?.setAttribute('data-api-comunas', '{% url "farmacia:api_comunas" %}');
+</script>
+<script src="{% static 'js/geografia.js' %}"></script>
 {% endblock %}

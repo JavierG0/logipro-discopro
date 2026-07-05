@@ -1,69 +1,52 @@
 {% extends 'base.html' %}
-
-{% block title %}Editar Movimiento - Discopro{% endblock %}
-{% block page_title %}Editar Movimiento{% endblock %}
+{% load static %}
+{% block title %}Editar Movimiento{% endblock %}
+{% block page_title %}Editar movimiento{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
-            <h4 class="mb-0"><i class="fa-solid fa-edit"></i> Actualizar Movimiento</h4>
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                {% csrf_token %}
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Número de Despacho / Receta</label>
-                        <input type="text" name="numero_despacho" class="form-control" value="{{ movimiento.numero_despacho }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Producto / Receta</label>
-                        <input type="text" name="descripcion" class="form-control" value="{{ movimiento.descripcion }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Motorista</label>
-                        <select name="motorista" class="form-select">
-                            <option value="">Sin asignar</option>
-                            {% for m in motoristas %}
-                                <option value="{{ m.id }}" {% if movimiento.motorista and movimiento.motorista.id == m.id %}selected{% endif %}>
-                                    {{ m.usuario.user.get_full_name }} - {{ m.vehiculo_placa }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Sucursal</label>
-                        <select name="sucursal" class="form-select" required>
-                            <option value="">Seleccionar...</option>
-                            {% for s in sucursales %}
-                                <option value="{{ s.id }}" {% if movimiento.sucursal.id == s.id %}selected{% endif %}>{{ s.nombre }} - {{ s.ciudad }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Tipo de Movimiento</label>
-                        <select name="tipo_movimiento" class="form-select" required>
-                            <option value="entrega" {% if movimiento.tipo_movimiento == 'entrega' %}selected{% endif %}>Entrega de Producto</option>
-                            <option value="retiro" {% if movimiento.tipo_movimiento == 'retiro' %}selected{% endif %}>Retiro de Receta</option>
-                            <option value="reemplazo" {% if movimiento.tipo_movimiento == 'reemplazo' %}selected{% endif %}>Reemplazo</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Fecha Programada</label>
-                        <input type="datetime-local" name="fecha_programada" class="form-control" value="{{ movimiento.fecha_programada|date:'Y-m-d\TH:i' }}" required>
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label">Observaciones</label>
-                        <textarea name="observaciones" class="form-control" rows="3">{{ movimiento.observaciones }}</textarea>
-                    </div>
-                </div>
-                <div class="mt-4 text-end">
-                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-save"></i> Guardar Cambios</button>
-                    <a href="{% url 'movimientos:detalle' movimiento.id %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Cancelar</a>
-                </div>
-            </form>
-        </div>
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-edit"></i> Actualizar {{ movimiento.numero_despacho }}</h3>
     </div>
-</div>
+
+    <form method="POST" class="form-grid form-submit-loading">
+        {% csrf_token %}
+        <div class="input-group">
+            <label for="numero_despacho">Código de despacho</label>
+            <input type="text" id="numero_despacho" name="numero_despacho" class="form-control" value="{{ movimiento.numero_despacho }}" required>
+        </div>
+        <div class="input-group full-width">
+            <label for="sucursal_origen">Farmacia de origen</label>
+            <select id="sucursal_origen" name="sucursal_origen" required>
+                <option value="">Seleccione farmacia...</option>
+                {% for s in sucursales %}
+                <option value="{{ s.id }}" {% if movimiento.sucursal_id == s.id %}selected{% endif %}>{{ s.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input-group full-width">
+            <label for="direccion_origen">Dirección de origen (automática)</label>
+            <input type="text" id="direccion_origen" name="direccion_origen" readonly value="{{ movimiento.direccion_origen }}">
+        </div>
+        <div class="input-group full-width">
+            <label for="direccion_destino">Dirección de destino</label>
+            <input type="text" id="direccion_destino" name="direccion_destino" value="{{ movimiento.direccion_destino }}" required>
+        </div>
+        <div class="input-group full-width">
+            <label for="motorista">Motorista asignado</label>
+            <select id="motorista" name="motorista" required data-selected="{{ movimiento.motorista_id|default:'' }}">
+                <option value="">Cargando motoristas...</option>
+            </select>
+            <p class="form-hint">Solo motoristas asignados a la farmacia de origen.</p>
+        </div>
+        <div class="full-width portal-actions">
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Guardar cambios</button>
+            <a href="{% url 'movimientos:detalle' movimiento.id %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/farmacia-origen.js' %}"></script>
 {% endblock %}

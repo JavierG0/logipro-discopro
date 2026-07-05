@@ -31,7 +31,9 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
 
 class MotoristaViewSet(viewsets.ModelViewSet):
-    queryset = Motorista.objects.select_related('usuario').all()
+    queryset = Motorista.objects.select_related('usuario__user').prefetch_related(
+        'asignaciones__moto', 'asignaciones__sucursal',
+    ).all()
     serializer_class = MotoristaSerializer
     permission_classes = [permissions.IsAuthenticated]
     
@@ -50,20 +52,15 @@ class SucursalViewSet(viewsets.ModelViewSet):
 
 
 class MovimientoViewSet(viewsets.ModelViewSet):
-    queryset = Movimiento.objects.select_related('motorista', 'sucursal').all()
+    queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        estado = self.request.query_params.get('estado')
-        motorista_id = self.request.query_params.get('motorista')
-        
-        if estado:
-            queryset = queryset.filter(estado=estado)
-        if motorista_id:
-            queryset = queryset.filter(motorista_id=motorista_id)
-        
+        numero_despacho = self.request.query_params.get('numero_despacho')
+        if numero_despacho:
+            queryset = queryset.filter(numero_despacho__icontains=numero_despacho)
         return queryset
 
 

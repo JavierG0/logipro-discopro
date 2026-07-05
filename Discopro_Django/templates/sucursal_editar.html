@@ -1,68 +1,77 @@
 {% extends 'base.html' %}
-{% block title %}Editar Sucursal - Discopro{% endblock %}
-{% block page_title %}Editar Sucursal{% endblock %}
+{% load static %}
+{% block title %}Editar Farmacia - Discopro{% endblock %}
+{% block page_title %}Editar Farmacia origen{% endblock %}
 
 {% block content %}
 <section class="card">
     <div class="card-header-action">
-        <h3><i class="fa-solid fa-store"></i> Editar Sucursal: {{ sucursal.nombre }}</h3>
+        <h3><i class="fa-solid fa-store"></i> Editar: {{ sucursal.nombre }}</h3>
     </div>
     
-    <form method="POST" class="form-container">
+    <form method="POST" class="form-container form-submit-loading">
         {% csrf_token %}
         
         <div class="form-group">
             <label for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }}</label>
             {{ form.nombre }}
-            {% if form.nombre.errors %}
-                <div class="alert alert-danger">{{ form.nombre.errors }}</div>
-            {% endif %}
+            {% if form.nombre.errors %}<div class="alert alert-danger">{{ form.nombre.errors }}</div>{% endif %}
         </div>
         
         <div class="form-group">
-            <label for="{{ form.ciudad.id_for_label }}">{{ form.ciudad.label }}</label>
-            {{ form.ciudad }}
-            {% if form.ciudad.errors %}
-                <div class="alert alert-danger">{{ form.ciudad.errors }}</div>
-            {% endif %}
+            <label for="{{ form.region.id_for_label }}">{{ form.region.label }}</label>
+            {{ form.region }}
+            {% if form.region.errors %}<div class="alert alert-danger">{{ form.region.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.provincia.id_for_label }}">{{ form.provincia.label }}</label>
+            {{ form.provincia }}
+            {% if form.provincia.errors %}<div class="alert alert-danger">{{ form.provincia.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.comuna.id_for_label }}">{{ form.comuna.label }}</label>
+            {{ form.comuna }}
+            {% if form.comuna.errors %}<div class="alert alert-danger">{{ form.comuna.errors }}</div>{% endif %}
         </div>
         
         <div class="form-group">
             <label for="{{ form.direccion.id_for_label }}">{{ form.direccion.label }}</label>
             {{ form.direccion }}
-            {% if form.direccion.errors %}
-                <div class="alert alert-danger">{{ form.direccion.errors }}</div>
-            {% endif %}
+            {% if form.direccion.errors %}<div class="alert alert-danger">{{ form.direccion.errors }}</div>{% endif %}
         </div>
         
         <div class="form-group">
             <label for="{{ form.telefono.id_for_label }}">{{ form.telefono.label }}</label>
             {{ form.telefono }}
-            {% if form.telefono.errors %}
-                <div class="alert alert-danger">{{ form.telefono.errors }}</div>
-            {% endif %}
+            {% if form.telefono.errors %}<div class="alert alert-danger">{{ form.telefono.errors }}</div>{% endif %}
         </div>
         
         <div class="form-group">
-            <label for="{{ form.encargado.id_for_label }}">{{ form.encargado.label }}</label>
-            {{ form.encargado }}
-            {% if form.encargado.errors %}
-                <div class="alert alert-danger">{{ form.encargado.errors }}</div>
-            {% endif %}
+            <label for="{{ form.encargado_nombre.id_for_label }}">{{ form.encargado_nombre.label }}</label>
+            {{ form.encargado_nombre }}
+            {% if form.encargado_nombre.errors %}<div class="alert alert-danger">{{ form.encargado_nombre.errors }}</div>{% endif %}
         </div>
         
         <div class="form-group">
             <label for="{{ form.activo.id_for_label }}">{{ form.activo.label }}</label>
             {{ form.activo }}
-            {% if form.activo.errors %}
-                <div class="alert alert-danger">{{ form.activo.errors }}</div>
-            {% endif %}
+            {% if form.activo.errors %}<div class="alert alert-danger">{{ form.activo.errors }}</div>{% endif %}
         </div>
         
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Actualizar Sucursal</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
             <a href="{% url 'farmacia:lista' %}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('id_region')?.setAttribute('data-api-provincias', '{% url "farmacia:api_provincias" %}');
+    document.getElementById('id_region')?.setAttribute('data-api-comunas', '{% url "farmacia:api_comunas" %}');
+</script>
+<script src="{% static 'js/geografia.js' %}"></script>
 {% endblock %}

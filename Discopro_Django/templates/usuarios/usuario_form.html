@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="breadcrumbs">
+    <a href="{% url 'usuarios:lista_sistema' %}">Usuarios</a> / <span>{{ titulo }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="card">
+    <form method="POST" class="form-grid form-submit-loading">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="input-group {% if field.name in 'password password_confirm' %}full-width{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<p class="form-hint">{{ field.help_text }}</p>{% endif %}
+            {% for error in field.errors %}<div class="alert alert-danger">{{ error }}</div>{% endfor %}
+        </div>
+        {% endfor %}
+        <div class="full-width portal-actions">
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-save"></i> Guardar</button>
+            <a href="{% url 'usuarios:lista_sistema' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -37,7 +37,7 @@
                 <dd>{{ motorista.tipo_licencia }}</dd>
                 <dt>Vigencia de licencia:</dt>
                 <dd>{{ motorista.vigencia_licencia|date:"d/m/Y" }}</dd>
-                <dt>Sucursal asignada:</dt>
+                <dt>Farmacia asignada:</dt>
                 <dd>{{ motorista.sucursal.nombre|default:'No asignada' }}</dd>
                 <dt>Moto asignada:</dt>
                 <dd>
@@ -53,10 +53,16 @@
 
     <div class="grid-2">
         <div>
-            <h4>Movimientos</h4>
+            <h4>Ubicación</h4>
             <dl>
-                <dt>Movimientos completados:</dt>
-                <dd>{{ motorista.movimientos_completados }}</dd>
+                <dt>Región:</dt>
+                <dd>{{ motorista.region|default:'No especificada' }}</dd>
+                <dt>Provincia:</dt>
+                <dd>{{ motorista.provincia|default:'No especificada' }}</dd>
+                <dt>Comuna:</dt>
+                <dd>{{ motorista.comuna|default:'No especificada' }}</dd>
+                <dt>Dirección:</dt>
+                <dd>{{ motorista.direccion|default:'No especificada' }}</dd>
                 <dt>Ubicación actual:</dt>
                 <dd>{{ motorista.ubicacion_actual|default:'No disponible' }}</dd>
             </dl>

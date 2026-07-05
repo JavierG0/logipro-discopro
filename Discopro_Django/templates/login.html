@@ -4,135 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Discopro</title>
-    <!-- Font Awesome -->
+    <title>Ingresar - LogiPro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .login-box {
-            background: #fff;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            width: 350px;
-            text-align: center;
-        }
-        .login-logo i {
-            font-size: 3.5rem;
-            color: #2a5298;
-            margin-bottom: 10px;
-        }
-        .login-logo h1 {
-            margin: 0;
-            font-size: 2rem;
-            color: #333;
-        }
-        .login-logo p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-        }
-        .input-group {
-            margin: 1rem 0;
-            text-align: left;
-        }
-        .input-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-            color: #444;
-            font-size: 0.9rem;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-        .input-group input:focus {
-            border-color: #2a5298;
-            outline: none;
-        }
-        .btn {
-            width: 100%;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 8px;
-            background: #2a5298;
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 1rem;
-        }
-        .btn:hover {
-            background: #1e3c72;
-        }
-        .alerts {
-            margin-bottom: 1rem;
-        }
-        .alert {
-            padding: 0.8rem;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            text-align: left;
-        }
-        .alert-error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #f87171;
-        }
-        .alert-success {
-            background-color: #dcfce7;
-            color: #166534;
-            border: 1px solid #4ade80;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
-    <div class="login-box">
-        <div class="login-logo">
-            <i class="fa-solid fa-motorcycle"></i>
-            <h1>Discopro</h1>
-            <p>Sistema de Control de Movimientos</p>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fa-solid fa-pills"></i>
+                <h1>LogiPro</h1>
+                <p>Sistema de gestión de despachos</p>
+            </div>
+
+            {% if messages %}
+            <div class="alerts">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'usuarios:login' %}" class="form-submit-loading">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" name="username" required placeholder="Ej: operador_arica" autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required placeholder="Ingrese su contraseña" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+            </form>
         </div>
-        
-        {% if messages %}
-        <div class="alerts">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-        <form method="POST" action="{% url 'usuarios:login' %}">
-            {% csrf_token %}
-            <div class="input-group">
-                <label for="username">Usuario</label>
-                <input type="text" id="username" name="username" required placeholder="Ingrese su usuario">
-            </div>
-            <div class="input-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required placeholder="Ingrese su contraseña">
-            </div>
-            <button type="submit" class="btn">Ingresar</button>
-        </form>
     </div>
+    <script src="{% static 'js/app.js' %}"></script>
 </body>
 </html>

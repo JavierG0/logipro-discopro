@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Mi Perfil{% endblock %}
+{% block page_title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h3><i class="fa-solid fa-user"></i> Información del motorista</h3>
+    <dl>
+        <dt>Nombre:</dt>
+        <dd>{{ motorista.usuario.user.get_full_name }}</dd>
+        <dt>RUT:</dt>
+        <dd>{{ motorista.usuario.rut }}</dd>
+        <dt>Teléfono:</dt>
+        <dd>{{ motorista.usuario.telefono|default:"No registrado" }}</dd>
+        <dt>Moto asignada:</dt>
+        <dd>{% if motorista.moto %}{{ motorista.moto.placa }} - {{ motorista.moto.marca }} {{ motorista.moto.modelo }}{% else %}No asignada{% endif %}</dd>
+        <dt>Farmacia asignada:</dt>
+        <dd>{% if motorista.sucursal %}{{ motorista.sucursal.nombre }}{% else %}No asignada{% endif %}</dd>
+    </dl>
+</section>
+{% endblock %}

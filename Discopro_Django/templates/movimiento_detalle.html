@@ -1,127 +1,42 @@
 {% extends 'base.html' %}
-{% block title %}Detalle de Movimiento - Discopro{% endblock %}
+{% block title %}Detalle de Movimiento{% endblock %}
 {% block page_title %}Detalle de Movimiento{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="breadcrumbs">
+    <a href="{% url 'home' %}">Movimientos</a> / <span>{{ movimiento.numero_despacho }}</span>
+</nav>
+{% endblock %}
 
 {% block content %}
 <section class="card">
     <div class="card-header-action">
-        <h3><i class="fa-solid fa-box"></i> Movimiento #{{ movimiento.numero_despacho }}</h3>
+        <h3><i class="fa-solid fa-box"></i> {{ movimiento.numero_despacho }}</h3>
         <span class="badge badge-{{ movimiento.estado }}">{{ movimiento.get_estado_display }}</span>
     </div>
-    
-    <div class="grid-2">
-        <div>
-            <h4>Información General</h4>
-            <dl>
-                <dt>Número de Despacho:</dt>
-                <dd>{{ movimiento.numero_despacho }}</dd>
-                
-                <dt>Tipo de Movimiento:</dt>
-                <dd>{{ movimiento.get_tipo_movimiento_display }}</dd>
-                
-                <dt>Estado:</dt>
-                <dd><span class="badge badge-{{ movimiento.estado }}">{{ movimiento.get_estado_display }}</span></dd>
-                
-                <dt>Farmacia:</dt>
-                <dd>{{ movimiento.sucursal.nombre }} - {{ movimiento.sucursal.ciudad }}</dd>
-            </dl>
-        </div>
-        
-        <div>
-            <h4>Asignación</h4>
-            <dl>
-                <dt>Motorista:</dt>
-                <dd>
-                    {% if movimiento.motorista %}
-                        {{ movimiento.motorista.usuario.user.get_full_name }}
-                        {% if movimiento.motorista.moto %}({{ movimiento.motorista.moto.placa }}){% endif %}
-                    {% else %}
-                        <em>Sin asignar</em>
-                    {% endif %}
-                </dd>
-                
-                <dt>Fecha Programada:</dt>
-                <dd>{{ movimiento.fecha_programada|date:"d/m/Y H:i" }}</dd>
-                
-                <dt>Distancia Estimada:</dt>
-                <dd>{{ movimiento.distancia_km|default:"0" }} km</dd>
-            </dl>
-        </div>
-    </div>
-    
-    <div class="grid-2">
-        <div>
-            <h4>Producto / Receta</h4>
-            <p>{{ movimiento.descripcion }}</p>
-        </div>
-        <div>
-            <h4>Observaciones</h4>
-            <p>{{ movimiento.observaciones|default:"Sin observaciones" }}</p>
-        </div>
-    </div>
 
-    <div class="grid-2">
-        <div>
-            <h4>Destinatario</h4>
-            <dl>
-                <dt>Nombre:</dt>
-                <dd>{{ movimiento.destinatario_nombre|default:"No registrado" }}</dd>
-                <dt>RUT:</dt>
-                <dd>{{ movimiento.destinatario_rut|default:"—" }}</dd>
-                <dt>Teléfono:</dt>
-                <dd>{{ movimiento.destinatario_telefono|default:"—" }}</dd>
-            </dl>
-        </div>
-        <div>
-            <h4>Dirección de entrega</h4>
-            <dl>
-                <dt>Dirección:</dt>
-                <dd>{{ movimiento.destinatario_direccion|default:"—" }}</dd>
-                <dt>Comuna:</dt>
-                <dd>{{ movimiento.destinatario_comuna|default:"—" }}</dd>
-                <dt>Región:</dt>
-                <dd>{{ movimiento.destinatario_region|default:"—" }}</dd>
-            </dl>
-        </div>
-    </div>
-    
-    {% if movimiento.estado == 'completado' %}
-    <div class="grid-2">
-        <div>
-            <h4>Información de Cierre</h4>
-            <dl>
-                <dt>Fecha de Inicio:</dt>
-                <dd>{{ movimiento.fecha_inicio|date:"d/m/Y H:i" }}</dd>
-                
-                <dt>Fecha de Cierre:</dt>
-                <dd>{{ movimiento.fecha_cierre|date:"d/m/Y H:i" }}</dd>
-                
-                <dt>Duración:</dt>
-                <dd>{{ movimiento.duracion_minutos }} minutos</dd>
-            </dl>
-        </div>
-        
-        <div>
-            <h4>Comentarios de Cierre</h4>
-            <p>{{ movimiento.comentarios|default:"Sin comentarios" }}</p>
-        </div>
-    </div>
-    {% endif %}
-    
-    <div class="actions text-right" style="margin-top: 2rem;">
+    <dl>
+        <dt>Farmacia de origen</dt>
+        <dd>{% if movimiento.sucursal %}{{ movimiento.sucursal.nombre }}{% else %}—{% endif %}</dd>
+
+        <dt>Dirección de origen</dt>
+        <dd>{{ movimiento.direccion_origen|default:"—" }}</dd>
+
+        <dt>Dirección de destino</dt>
+        <dd>{{ movimiento.direccion_destino }}</dd>
+
+        <dt>Motorista</dt>
+        <dd>{% if movimiento.motorista %}{{ movimiento.motorista.usuario.user.get_full_name }}{% else %}Sin asignar{% endif %}</dd>
+
+        <dt>Fecha de registro</dt>
+        <dd>{{ movimiento.creado_en|date:"d/m/Y H:i" }}</dd>
+    </dl>
+
+    <div class="portal-actions">
         {% if puede_gestionar_flota %}
-            {% if movimiento.estado != 'completado' %}
-                <a href="{% url 'movimientos:completar' movimiento.id %}" class="btn btn-success">
-                    <i class="fa-solid fa-check"></i> Completar Movimiento
-                </a>
-            {% endif %}
-            <a href="{% url 'movimientos:editar' movimiento.id %}" class="btn btn-warning">
-                <i class="fa-solid fa-edit"></i> Editar
-            </a>
+        <a href="{% url 'movimientos:editar' movimiento.id %}" class="btn btn-warning"><i class="fa-solid fa-edit"></i> Editar</a>
         {% endif %}
-        <a href="{% url 'home' %}" class="btn btn-secondary">
-            <i class="fa-solid fa-arrow-left"></i> Volver
-        </a>
+        <a href="{% url 'home' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Volver</a>
     </div>
 </section>
 {% endblock %}

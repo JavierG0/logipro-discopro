@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios del sistema{% endblock %}
+{% block page_title %}Administración de usuarios{% endblock %}
+
+{% block content %}
+<section class="card">
+    <div class="card-header-action">
+        <h3><i class="fa-solid fa-users-gear"></i> Usuarios internos</h3>
+        <a href="{% url 'usuarios:crear_sistema' %}" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Nuevo usuario</a>
+    </div>
+    <p class="form-hint">Gestione accesos de administrador, supervisor, operadora y motorista. Las farmacias no tienen acceso al sistema.</p>
+
+    <form method="GET" class="filters-bar" style="margin-top: 1rem;">
+        <div class="input-group">
+            <label for="q">Buscar</label>
+            <input type="text" id="q" name="q" value="{{ q }}" placeholder="Usuario, nombre o RUT">
+        </div>
+        <div class="filters-bar-actions">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
+
+    <div class="table-responsive" style="margin-top: 1rem;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>RUT</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u.user.username }}</td>
+                    <td>{{ u.user.get_full_name }}</td>
+                    <td>{{ u.rut }}</td>
+                    <td>{{ u.get_rol_display }}</td>
+                    <td>{% if u.estado %}Activo{% else %}Inactivo{% endif %}</td>
+                    <td><a href="{% url 'usuarios:editar_sistema' u.pk %}" class="btn btn-sm btn-info">Editar</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center">No hay usuarios registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

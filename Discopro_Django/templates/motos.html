@@ -21,16 +21,6 @@
             </select>
         </div>
         
-        <div class="filter-group">
-            <label>Filtrar por sucursal:</label>
-            <select name="sucursal" id="sucursal-filter" onchange="this.form.submit()">
-                <option value="">Todas</option>
-                {% for s in sucursales %}
-                    <option value="{{ s.id }}" {% if request.GET.sucursal|add:"0" == s.id %}selected{% endif %}>{{ s.nombre }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
         <div class="filter-group" style="display:flex;">
             <input type="text" name="busqueda" id="busqueda" placeholder="Buscar moto..." value="{{ request.GET.busqueda|default_if_none:'' }}">
             <button type="submit" class="btn btn-secondary" style="margin-left:10px;">Buscar</button>
@@ -47,7 +37,7 @@
                     <th>Modelo</th>
                     <th>Año</th>
                     <th>Color</th>
-                    <th>Sucursal</th>
+                    <th>Motorista responsable</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -61,7 +51,15 @@
                     <td>{{ m.modelo }}</td>
                     <td>{{ m.año }}</td>
                     <td>{{ m.color }}</td>
-                    <td>{{ m.sucursal.nombre }}</td>
+                    <td>
+                        {% with responsables=m.motoristas.all %}
+                            {% for motorista in responsables %}
+                                {{ motorista.usuario.user.get_full_name }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                No asignada
+                            {% endfor %}
+                        {% endwith %}
+                    </td>
                     <td><span class="badge badge-{{ m.estado }}">{{ m.get_estado_display }}</span></td>
                     <td>
                         <a href="{% url 'motoristas:editar_moto' m.id %}" class="btn btn-sm btn-warning">Editar</a>

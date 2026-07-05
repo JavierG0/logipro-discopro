@@ -37,7 +37,7 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 /media
-/static
+/staticfiles/
 .DS_Store
 
 # IDE
@@ -69,8 +69,8 @@ Thumbs.db
 htmlcov/
 
 # Migraciones temporales
-migrations/*
-!migrations/__init__.py
+#migrations/*
+#!migrations/__init__.py
 
 # Archivos temporales
 *.tmp
