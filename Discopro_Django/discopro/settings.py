@@ -69,7 +69,7 @@ WSGI_APPLICATION = 'discopro.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME', default='discopro_db'),
+        'NAME': config('DB_NAME', default='discopro_d'),
         'USER': config('DB_USER', default='root'),
         'PASSWORD': config('DB_PASSWORD', default='admin123'),
         'HOST': config('DB_HOST', default='localhost'),
